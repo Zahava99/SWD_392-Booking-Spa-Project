@@ -1,0 +1,44 @@
+.make-purchase-page {
+  padding: 10px 20px;
+}
+
+.make-purchase-page .header {
+  margin-bottom: 5px;
+}
+.make-purchase-page .title {
+  font-family: "Playfair Display";
+  font-size: 35px;
+  font-weight: 500;
+  /* margin-bottom: 20px; */
+}
+.make-purchase-page .sub-title {
+  font-family: "Playfair Display";
+  font-size: 24px;
+  font-weight: 500;
+  /* margin-bottom: 20px; */
+}
+
+.make-purchase-page .action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  /* font-family: Inter; */
+  margin-bottom: 20px;
+}
+.make-purchase-page .action .action-left {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+}
+.make-order-space {
+  display: flex;
+  justify-content: space-between;
+}
+.make-purchase-page .information {
+  /* margin-top: 5px; */
+  font-family: "Playfair Display";
+  font-size: 40px;
+  font-weight: 500;
+}
