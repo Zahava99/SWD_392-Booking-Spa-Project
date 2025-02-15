@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  width: 100%;
 }
 
 .App-logo {
@@ -35,4 +36,11 @@
   to {
     transform: rotate(360deg);
   }
+}
+@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Display&family=Hind:wght@300;500;600;700&display=swap');
+/* .container-fluid{
+background-color: brown
+} */
+.p-0{
+  padding-left: 0px;
 }
