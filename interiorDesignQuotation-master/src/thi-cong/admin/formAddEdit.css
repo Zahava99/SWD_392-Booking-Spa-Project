@@ -1,0 +1,66 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    margin-top: 20px;
+}
+.form {
+    width: 70%; /* Điều chỉnh chiều rộng */
+    height: auto; 
+    padding: 30px; 
+    background-color: #4277987d;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    margin-top: 50px;
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: hidden;
+}
+.form form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contents-form {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.contents-form label{
+    width: 460px;
+    font-size: 22px;
+    margin: 0;
+}
+.contents-form input{
+    margin: 10px 0;
+    width: 100%;
+    text-align: center;
+}
+.form-button {
+    width: 100%; 
+    padding: 10px; 
+    background-color: #fff; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    align-self: flex-end;
+    background-image: linear-gradient(to left, rgba(195, 177, 75, 0.633), transparent); /* Gradient màu từ đen sang trong */
+    background-size: 200% 100%; /* Đặt kích thước nền */
+    transition: background-position 1.5s; /* Transition cho background-position */
+    color: rgb(0, 0, 0);
+}
+
+.form-button:hover {
+    background-position: 100% 0; /* Di chuyển background từ phải sang trái */
+}
+.form-button:active{
+    color: rgb(42, 183, 66);
+}
+.error {
+    color: red; 
+}
