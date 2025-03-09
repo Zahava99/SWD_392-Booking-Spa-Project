@@ -16,7 +16,8 @@ import { Link } from 'react-router-dom'
 import HomeIcon from '@mui/icons-material/Home'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers'
-
+import dayjs from 'dayjs'
+const tomorrow = dayjs().add(1, 'day');
 const Appointment = () => {
   const [selectedDate, setSelectedDate] = useState(null)
   const [formData, setFormData] = useState({
@@ -186,6 +187,8 @@ const Appointment = () => {
                       label='Date'
                       value={selectedDate}
                       onChange={handleDateChange}
+                      defaultValue={tomorrow}
+                      disableFuture
                       renderInput={params => (
                         <TextField
                           {...params}
