@@ -1,2 +1,0 @@
-Git FE: https://github.com/Zahava99/interiorDesignQuotation
-Git BE: https://github.com/Floak-yak/API_SWP

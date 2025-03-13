@@ -32,7 +32,9 @@ const Login = () => {
     password: '',
     rememberMe: false
   })
-  const [error, setError] = useState('');
+  const [
+    // error
+    , setError] = useState('');
   const handleChange = e => {
     const { name, value, checked } = e.target
     setFormData(prevState => ({
@@ -60,7 +62,7 @@ const Login = () => {
       )
       console.log('LoL',response.data)
       if (response.data.data.accessToken) {
-        sessionStorage.setItem('token', response.data.token)
+        sessionStorage.setItem('token', response.data.data.accessToken)
         navigate('/')
       }else {
         toast.error(response.data.message || 'Login failed',{autoClose: 2000});

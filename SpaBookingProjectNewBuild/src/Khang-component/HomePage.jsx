@@ -1,4 +1,5 @@
-import { useRef } from 'react'
+import { useRef,useEffect,useState } from 'react'
+import axios from 'axios'
 import {
   Box,
   Container,
@@ -65,10 +66,27 @@ const TestimonialCard = styled(Paper)(({ theme }) => ({
   flexDirection: 'column',
   backgroundColor: '#f8f9fa'
 }))
-
 const HomePage = () => {
   const prevRef = useRef(null)
   const nextRef = useRef(null)
+
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  useEffect(() => {
+    const token = sessionStorage.getItem('token')
+    if (token) {
+      axios.get('http://localhost:3000/api/auth/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(response => {
+          setIsLoggedIn(true);
+        })
+        .catch(() => {
+          setIsLoggedIn(false);
+        });
+    }
+  }, [])
+
 
   // Danh sách dịch vụ
   const services = [
@@ -118,7 +136,15 @@ const HomePage = () => {
               variant='contained'
               size='large'
               component={Link}
-              to='/appointment'
+              // to='/appointment'
+              onClick={() => {
+                if (isLoggedIn) {
+                  window.location.href = '/appointment'
+                } else {
+                  alert('Bạn cần đăng nhập để đặt lịch hẹn!')
+                  window.location.href = '/login'
+                }
+              }}
               sx={{
                 mt: 2,
                 backgroundColor: '#4caf50',
