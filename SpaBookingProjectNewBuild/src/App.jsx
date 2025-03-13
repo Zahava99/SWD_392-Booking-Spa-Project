@@ -25,7 +25,10 @@ import Header from './Header & Footer/Header';
 import HomePage from './Khang-component/HomePage';
 import Appointment from './Khang-component/Appointment';
 import Footer from './Header & Footer/Footer';
-import Login from './assets/Auth/login';
+import Login from './Auth/login';
+import Register from './Auth/register';
+import Payment from './Auth/Payment';
+import Profile from './Khang-component/Profile';
 // Create theme
 const theme = createTheme({
   palette: {
@@ -61,6 +64,9 @@ function App() {
           {/* Add more routes as needed */}
           <Route path="/appointment" element={<Appointment />} />
          <Route path="/login" element={<Login/>}/>
+         <Route path="/register" element={<Register/>}/>
+         <Route path="/payment" element={<Payment/>}/>
+         <Route path="/profile" element={<Profile/>}/>
         </Routes>
         <Footer />
       </Router>

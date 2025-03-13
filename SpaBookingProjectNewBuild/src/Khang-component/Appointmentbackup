@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
   Container,
   Typography,
@@ -24,7 +23,6 @@ const Appointment = () => {
   //Test
   const [subjects, setSubjects] = useState([])
   const [services, setServices] = useState([])
-  const [filteredServices, setFilteredServices] = useState([])
   //
   const [selectedDate, setSelectedDate] = useState(null)
   const [formData, setFormData] = useState({
@@ -36,9 +34,7 @@ const Appointment = () => {
     date: null,
     comment: ''
   })
-  //
-  const navigate = useNavigate()
-  //
+
   //Test
   //http://localhost:3000/api/category
   // useEffect(() => {
@@ -66,7 +62,7 @@ const Appointment = () => {
   //   fetchCategories();
   // }, []);
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCategoriesAndServices = async () => {
       try {
         const token = sessionStorage.getItem('token')
         if (!token) {
@@ -82,9 +78,8 @@ const Appointment = () => {
           }
         )
         if (categoryResponse.data?.data) {
-          setSubjects(categoryResponse.data.data)
+          setSubjects(categoryResponse.data.data.map(item => item.name))
         }
-        console.log('categoryresponse', categoryResponse.data.data)
 
         // Fetch Services
         const serviceResponse = await axios.get(
@@ -104,58 +99,16 @@ const Appointment = () => {
       }
     }
 
-    fetchData()
+    fetchCategoriesAndServices()
   }, [])
   //
 
   const handleChange = e => {
-    // const { name, value } = e.target
-    // setFormData(prevState => ({
-    //   ...prevState,
-    //   [name]: value
-    // }))
-    // const { name, value } = e.target
-    // setFormData(prevState => ({
-    //   ...prevState,
-    //   [name]: value
-    // }))
-
-    // if (name === 'subject') {
-    //   filterServices(value)
-    // }
-    // console.log(filterServices(value));
     const { name, value } = e.target
-    if (name === 'subject') {
-      setFormData(prevState => ({
-        ...prevState,
-        subject: value,
-        service: '' // Đặt lại service khi subject thay đổi
-      }))
-      filterServices(value) // Cập nhật filteredServices dựa trên subject mới
-    } else {
-      setFormData(prevState => ({
-        ...prevState,
-        [name]: value
-      }))
-    }
-  }
-  useEffect(() => {
-    console.log('Filtered services:', filteredServices)
-  }, [filteredServices])
-  // const filterServices = selectedSubject => {
-  //   const subjectObj = subjects.find(sub => sub.name === selectedSubject)
-  //   if (!subjectObj) return
-
-  //   const filtered = services.filter(service =>
-  //     service.categories.includes(subjectObj.id)
-  //   )
-  //   setFilteredServices(filtered)
-  // }
-  const filterServices = selectedSubject => {
-    const filtered = services.filter(service =>
-      service.categories.some(catId => catId == selectedSubject)
-    )
-    setFilteredServices(filtered)
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }))
   }
 
   const handleDateChange = date => {
@@ -167,25 +120,10 @@ const Appointment = () => {
   }
 
   const handleSubmit = e => {
-    // e.preventDefault()
-    // console.log(formData)
-    // // Here you would typically send the data to your backend
-    // alert('Appointment request submitted!')
     e.preventDefault()
     console.log(formData)
-
-    // Tìm dịch vụ đã chọn từ filteredServices
-    const selectedService = filteredServices.find(
-      service => service.id === formData.service
-    )
-
-    // Chuyển hướng sang trang Payment và truyền dữ liệu formData + selectedService
-    navigate('/payment', {
-      state: {
-        formData,
-        selectedService
-      }
-    })
+    // Here you would typically send the data to your backend
+    alert('Appointment request submitted!')
   }
 
   // const subjects = [
@@ -324,8 +262,7 @@ const Appointment = () => {
                       value={selectedDate}
                       onChange={handleDateChange}
                       defaultValue={tomorrow}
-                      // disableFuture
-                      disablePast
+                      disableFuture
                       renderInput={params => (
                         <TextField
                           {...params}
@@ -338,7 +275,7 @@ const Appointment = () => {
                   </LocalizationProvider>
                 </Grid2>
                 <Grid2 item size={{ xs: 12, md: 12 }}>
-                  {/* <TextField
+                  <TextField
                     select
                     required
                     fullWidth
@@ -354,55 +291,11 @@ const Appointment = () => {
                         {option}
                       </MenuItem>
                     ))}
-                  </TextField> */}
-                  <TextField
-                    select
-                    fullWidth
-                    id='subject'
-                    label='Select Subject'
-                    name='subject'
-                    value={formData.subject}
-                    onChange={handleChange}
-                    variant='outlined'
-                    required
-                  >
-                    {subjects.length > 0 ? (
-                      subjects.map(subject => (
-                        <MenuItem key={subject.id} value={subject.id}>
-                          {subject.name}
-                        </MenuItem>
-                      ))
-                    ) : (
-                      <MenuItem disabled>No subjects available</MenuItem>
-                    )}
                   </TextField>
                 </Grid2>
-                <Grid2 item size={{ xs: 12, md: 12 }}>
+                <Grid2>
                   {/* Select Service */}
-                  {/* Select Service - Chỉ hiển thị các service thuộc subject đã chọn */}
                   <TextField
-                    select
-                    fullWidth
-                    id='service'
-                    label='Select Service'
-                    name='service'
-                    value={formData.service}
-                    onChange={handleChange}
-                    variant='outlined'
-                    required
-                    disabled={!formData.subject}
-                  >
-                    {filteredServices.length > 0 ? (
-                      filteredServices.map(service => (
-                        <MenuItem key={service.id} value={service.id}>
-                          {service.name} - {service.price.toLocaleString()} VND
-                        </MenuItem>
-                      ))
-                    ) : (
-                      <MenuItem disabled>No services available</MenuItem>
-                    )}
-                  </TextField>
-                  {/* <TextField
                     select
                     fullWidth
                     id='service'
@@ -422,7 +315,7 @@ const Appointment = () => {
                     ) : (
                       <MenuItem disabled>No services available</MenuItem>
                     )}
-                  </TextField> */}
+                  </TextField>
                 </Grid2>
                 {/* <Grid2 item size={{ xs: 12, md: 12 }}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
