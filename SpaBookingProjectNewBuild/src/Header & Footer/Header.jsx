@@ -23,22 +23,52 @@ const Header = () => {
   //
   const navigate = useNavigate();
   //
+  // useEffect(() => {
+  //   const token = sessionStorage.getItem('token')
+  //   if (token) {
+  //     axios.get('http://localhost:3000/api/auth/profile', {
+  //       headers: { Authorization: `Bearer ${token}` }
+  //     })
+  //       .then(response => {
+  //         setIsLoggedIn(true);
+  //         setUserName(response.data.data.fName || 'Người dùng');
+  //         // window.location.reload();
+  //       })
+  //       .catch(() => {
+  //         setIsLoggedIn(false);
+  //         setUserName('');
+  //       });
+  //   }
+  // }, [])
   useEffect(() => {
-    const token = sessionStorage.getItem('token')
-    if (token) {
-      axios.get('http://localhost:3000/api/auth/profile', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then(response => {
-          setIsLoggedIn(true);
-          setUserName(response.data.fName || 'Người dùng');
-        })
-        .catch(() => {
-          setIsLoggedIn(false);
-          setUserName('');
-        });
-    }
-  }, [])
+    const updateAuthState = () => {
+      const token = sessionStorage.getItem('token');
+      if (token) {
+        axios
+          .get('http://localhost:3000/api/auth/profile', {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then(response => {
+            setIsLoggedIn(true);
+            setUserName(response.data.data.fName || 'Người dùng');
+          })
+          .catch(() => {
+            setIsLoggedIn(false);
+            setUserName('');
+          });
+      } else {
+        setIsLoggedIn(false);
+        setUserName('');
+      }
+    };
+  
+    updateAuthState();
+    window.addEventListener('authChange', updateAuthState);
+  
+    return () => {
+      window.removeEventListener('authChange', updateAuthState);
+    };
+  }, []);
   const handleClick = (event, setAnchorEl) => {
     setAnchorEl(event.currentTarget)
   }
@@ -54,6 +84,7 @@ const Header = () => {
     setIsLoggedIn(false);
     setUserName('');
     navigate('/login');
+    window.location.reload();
   }
   //
   return (
@@ -89,7 +120,7 @@ const Header = () => {
             onClick={e => handleClick(e, setServiceAnchorEl)}
             sx={{ color: '#000', textTransform: 'none', fontWeight: 'medium' }}
           >
-            Dịch vụ Spa
+            Danh mục Spa
           </Button>
           <Menu
             anchorEl={serviceAnchorEl}
@@ -190,7 +221,7 @@ const Header = () => {
           </IconButton>
         </Box> */}
         {/* Thanh tìm kiếm hoặc tên người dùng */}
-        {isLoggedIn ? (
+        {/* {isLoggedIn ? (
           <Button
             color='inherit'
             component={Link}
@@ -222,6 +253,11 @@ const Header = () => {
               <SearchIcon />
             </IconButton>
           </Box>
+        )} */}
+                {isLoggedIn && (
+          <Button color='inherit' component={Link} to='/profile' sx={{ ml: 2, color: '#000', textTransform: 'none', fontWeight: 'medium' }}>
+            {userName || 'Người dùng'}
+          </Button>
         )}
       </Toolbar>
     </AppBar>

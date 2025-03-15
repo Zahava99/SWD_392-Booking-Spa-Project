@@ -51,7 +51,6 @@ const Login = () => {
     e.preventDefault();
     setError('');
     console.log(formData)
-    // Here you would typically authenticate the user
     try {
       const response = await axios.post(
         'http://localhost:3000/api/auth/login',
@@ -63,13 +62,13 @@ const Login = () => {
       console.log('LoL',response.data)
       if (response.data.data.accessToken) {
         sessionStorage.setItem('token', response.data.data.accessToken)
+        window.dispatchEvent(new Event('authChange'));
         navigate('/')
       }else {
         toast.error(response.data.message || 'Login failed',{autoClose: 2000});
         setError(response.data.message || 'Login failed');
       }
     } catch (error) {
-      // Handle login error
       console.error(error)
       setError( error.response.data.message || 'Server Error');
       if(error.response){
@@ -85,14 +84,10 @@ const Login = () => {
         setError(error.message || 'Server Error');
       }
     }
-    
-    // alert('Login successful!');
-    // navigate('/');
   }
 
   return (
     <>
-      {/* Hero Section with Background Image */}
       <Box
         sx={{
           height: '300px',

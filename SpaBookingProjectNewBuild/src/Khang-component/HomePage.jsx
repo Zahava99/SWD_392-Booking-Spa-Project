@@ -1,4 +1,4 @@
-import { useRef,useEffect,useState } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import axios from 'axios'
 import {
   Box,
@@ -16,17 +16,15 @@ import {
 import { styled } from '@mui/material/styles'
 import StarIcon from '@mui/icons-material/Star'
 import { Link } from 'react-router-dom'
-
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Pagination } from 'swiper/modules'
-// Import Swiper styles
 import 'swiper/css'
 import 'swiper/css/navigation'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-
 import '../Khang-component-css/homePage.css'
-// Placeholder images - replace with actual images in your project
+
+// Placeholder images
 const heroImage =
   'https://images.unsplash.com/photo-1600334129128-685c5582fd35?q=80&w=2070&auto=format&fit=crop'
 const service1 =
@@ -37,6 +35,9 @@ const service3 =
   'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?q=80&w=2070&auto=format&fit=crop'
 const service4 =
   'https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=2070&auto=format&fit=crop'
+
+// Array of service images to cycle through
+const serviceImages = [service1, service2, service3, service4]
 
 const HeroSection = styled(Box)(() => ({
   backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${heroImage})`,
@@ -66,55 +67,50 @@ const TestimonialCard = styled(Paper)(({ theme }) => ({
   flexDirection: 'column',
   backgroundColor: '#f8f9fa'
 }))
+
 const HomePage = () => {
   const prevRef = useRef(null)
   const nextRef = useRef(null)
 
-
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [services, setServices] = useState([])
+
+  // Check login status
   useEffect(() => {
     const token = sessionStorage.getItem('token')
     if (token) {
-      axios.get('http://localhost:3000/api/auth/profile', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      axios
+        .get('http://localhost:3000/api/auth/profile', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
         .then(response => {
-          setIsLoggedIn(true);
+          setIsLoggedIn(true)
         })
         .catch(() => {
-          setIsLoggedIn(false);
-        });
+          setIsLoggedIn(false)
+        })
     }
   }, [])
 
+  // Fetch services from API
+  useEffect(() => {
+    axios
+      .get('https://6670f800e083e62ee4399f31.mockapi.io/API/Test01')
+      .then(response => {
+        const fetchedServices = response.data.map((service, index) => ({
+          id: service.id,
+          title: service.name,
+          image: serviceImages[index % serviceImages.length],
+          description: service.description,
+          price: service.price
+        }))
+        setServices(fetchedServices)
+      })
+      .catch(error => {
+        console.error('Error fetching services:', error)
+      })
+  }, [])
 
-  // Danh sách dịch vụ
-  const services = [
-    {
-      title: 'Massage Therapy',
-      image: service1,
-      description:
-        'Relieve tension and promote relaxation with our therapeutic massage treatments.'
-    },
-    {
-      title: 'Facial Treatments',
-      image: service2,
-      description:
-        'Rejuvenate your skin with our customized facial treatments for all skin types.'
-    },
-    {
-      title: 'Body Treatments',
-      image: service3,
-      description:
-        'Pamper your body with our luxurious scrubs, wraps, and therapeutic treatments.'
-    },
-    {
-      title: 'Aromatherapy',
-      image: service4,
-      description:
-        'Experience the healing power of essential oils with our aromatherapy services.'
-    }
-  ]
   return (
     <Box>
       {/* Hero Section */}
@@ -136,7 +132,6 @@ const HomePage = () => {
               variant='contained'
               size='large'
               component={Link}
-              // to='/appointment'
               onClick={() => {
                 if (isLoggedIn) {
                   window.location.href = '/appointment'
@@ -171,51 +166,19 @@ const HomePage = () => {
           >
             Our Services
           </Typography>
-          {/*           
-          <Grid container spacing={4}>
-            {[
-              { title: 'Massage Therapy', image: service1, description: 'Relieve tension and promote relaxation with our therapeutic massage treatments.' },
-              { title: 'Facial Treatments', image: service2, description: 'Rejuvenate your skin with our customized facial treatments for all skin types.' },
-              { title: 'Body Treatments', image: service3, description: 'Pamper your body with our luxurious scrubs, wraps, and therapeutic treatments.' },
-              { title: 'Aromatherapy', image: service4, description: 'Experience the healing power of essential oils with our aromatherapy services.' }
-            ].map((service, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
-                <ServiceCard>
-                  <CardMedia
-                    component="img"
-                    height="200"
-                    image={service.image}
-                    alt={service.title}
-                  />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="h3">
-                      {service.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {service.description}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small" color="primary">Learn More</Button>
-                  </CardActions>
-                </ServiceCard>
-              </Grid>
-            ))}
-          </Grid> */}
           <Swiper
             modules={[Navigation, Pagination]}
             spaceBetween={20}
             slidesPerView={3}
             autoplay={{ delay: 3000, disableOnInteraction: false }}
-            // Gán ref cho navigation trong onBeforeInit
-            onSwiper={(swiper) => {
+            onSwiper={swiper => {
               setTimeout(() => {
-                swiper.params.navigation.prevEl = prevRef.current;
-                swiper.params.navigation.nextEl = nextRef.current;
-                swiper.navigation.destroy();
-                swiper.navigation.init();
-                swiper.navigation.update();
-              }, 100); // Đợi 100ms để ref được gán
+                swiper.params.navigation.prevEl = prevRef.current
+                swiper.params.navigation.nextEl = nextRef.current
+                swiper.navigation.destroy()
+                swiper.navigation.init()
+                swiper.navigation.update()
+              }, 100)
             }}
             breakpoints={{
               600: { slidesPerView: 1 },
@@ -223,8 +186,8 @@ const HomePage = () => {
               1280: { slidesPerView: 3 }
             }}
           >
-            {services.map((service, index) => (
-              <SwiperSlide key={index}>
+            {services.map(service => (
+              <SwiperSlide key={service.id}>
                 <ServiceCard>
                   <CardMedia
                     component='img'
@@ -239,12 +202,15 @@ const HomePage = () => {
                     <Typography variant='body2' color='text.secondary'>
                       {service.description}
                     </Typography>
+                    <Typography variant='body1' color='primary' sx={{ mt: 1 }}>
+                      Price: {service.price.toLocaleString()} VND
+                    </Typography>
                   </CardContent>
-                  <CardActions>
-                    <Button size='small' color='primary'>
+                  {/* <CardActions>
+                    <Button size="small" color="primary">
                       Learn More
                     </Button>
-                  </CardActions>
+                  </CardActions> */}
                 </ServiceCard>
               </SwiperSlide>
             ))}
@@ -357,7 +323,6 @@ const HomePage = () => {
           >
             What Our Clients Say
           </Typography>
-
           <Grid container spacing={4}>
             {[
               {
@@ -418,15 +383,40 @@ const HomePage = () => {
             Book your appointment today and start your journey to relaxation and
             wellness.
           </Typography>
-          <Button
-            variant='contained'
-            size='large'
+          {/* <Button
+            variant="contained"
+            size="large"
             sx={{
               mt: 2,
               backgroundColor: 'white',
               color: '#4caf50',
               '&:hover': {
-                backgroundColor: '#f5f5f5'
+                backgroundColor: '#f5f5f5',
+              },
+              borderRadius: '25px',
+              px: 4,
+            }}
+          >
+            Book Now
+          </Button> */}
+          <Button
+            variant='contained'
+            size='large'
+            component={Link}
+            onClick={() => {
+              if (isLoggedIn) {
+                window.location.href = '/appointment'
+              } else {
+                alert('Bạn cần đăng nhập để đặt lịch hẹn!')
+                window.location.href = '/login'
+              }
+            }}
+            sx={{
+              mt: 2,
+              backgroundColor: 'white',
+              color: '#4caf50',
+              '&:hover': {
+                backgroundColor: '#f5f5f5',
               },
               borderRadius: '25px',
               px: 4

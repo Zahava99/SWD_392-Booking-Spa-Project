@@ -1,4 +1,5 @@
-// import React from 'react';
+import { useState } from 'react'
+import axios from 'axios'
 import {
   Container,
   Typography,
@@ -8,25 +9,71 @@ import {
   Link as MuiLink,
   Grid,
   Card,
-  CardContent
+  CardContent,
+  Button
 } from '@mui/material'
 import { Link, useLocation } from 'react-router-dom'
 import HomeIcon from '@mui/icons-material/Home'
-import QrCodeIcon from '@mui/icons-material/QrCode2'
 
 const Payment = () => {
-  const location = useLocation() // Lấy dữ liệu từ state
-  const {
-    //  formData, 
-    selectedService } = location.state || {}
+  const location = useLocation()
+  const { selectedService } = location.state || {}
 
-  // Tính số tiền cần trả trước (15% giá dịch vụ)
-  const depositAmount = selectedService
-    ? (selectedService.price * 0.15).toLocaleString()
-    : '0'
+  // Tính toán số tiền đặt cọc (15% giá dịch vụ)
+  const depositAmountNumber = selectedService ? selectedService.price * 0.15 : 0
+  const depositAmountFormatted = depositAmountNumber.toLocaleString()
+
+  const [paymentLink, setPaymentLink] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const handlePayment = async () => {
+    setError('')
+    const token = sessionStorage.getItem('token')
+    if (!token) {
+      setError('Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục thanh toán.')
+      return
+    }
+
+    const appointmentId = localStorage.getItem('appointmentId')
+    if (!appointmentId) {
+      setError('Appointment ID không tồn tại trong localStorage')
+      return
+    }
+
+    try {
+      setLoading(true)
+      const response = await axios.post(
+        'http://localhost:3000/api/payment/create',
+        {
+          totalAmount: depositAmountNumber,
+          appointmentId: appointmentId,
+          method: 0,
+          cancelUrl: 'http://localhost:3000/cancel'
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+
+      // Kiểm tra response có paymentLink không
+      if (response.data && response.data.paymentLink) {
+        setPaymentLink(response.data.paymentLink)
+      } else {
+        setError('Không nhận được link thanh toán từ server')
+      }
+    } catch (err) {
+      console.error(err)
+      setError('Có lỗi xảy ra trong quá trình thanh toán')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <>
-      {/* Hero Section with Background Image */}
       <Box
         sx={{
           height: '300px',
@@ -134,10 +181,10 @@ const Payment = () => {
                   color: '#333'
                 }}
               >
-                Số tiền cần trả trước: {depositAmount} VND
+                Số tiền cần trả trước: {depositAmountFormatted} VND
               </Typography>
               {/* QR Code Placeholder */}
-              <Box
+              {/* <Box
                 sx={{
                   width: '300px',
                   height: '300px',
@@ -167,7 +214,7 @@ const Payment = () => {
                 >
                   Quét mã QR để thanh toán
                 </Typography>
-              </Box>
+              </Box> */}
 
               <Card
                 sx={{
@@ -175,7 +222,7 @@ const Payment = () => {
                   mb: 3
                 }}
               >
-                <CardContent>
+                {/* <CardContent>
                   <Typography
                     variant='body1'
                     sx={{
@@ -212,10 +259,39 @@ const Payment = () => {
                   >
                     Chủ tài khoản: LUXURY SPA
                   </Typography>
-                </CardContent>
+                </CardContent> */}
               </Card>
 
-              <Typography
+              {error && (
+                <Typography variant='body2' sx={{ color: 'red', mb: 2 }}>
+                  {error}
+                </Typography>
+              )}
+
+              <Button
+                variant='contained'
+                color='primary'
+                onClick={handlePayment}
+                disabled={loading}
+                sx={{ mb: 2 }}
+              >
+                {loading ? 'Đang xử lý...' : 'Thanh toán ngay'}
+              </Button>
+
+              {paymentLink && (
+                <Typography variant='body1' sx={{ mt: 2 }}>
+                  Link thanh toán:{' '}
+                  <MuiLink
+                    href={paymentLink}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    Nhấn vào đây để thanh toán
+                  </MuiLink>
+                </Typography>
+              )}
+
+              {/* <Typography
                 variant='body2'
                 sx={{
                   color: '#666',
@@ -223,7 +299,7 @@ const Payment = () => {
                 }}
               >
                 Sau khi thanh toán, chúng tôi sẽ gửi xác nhận qua email của bạn
-              </Typography>
+              </Typography> */}
             </Paper>
           </Grid>
         </Grid>

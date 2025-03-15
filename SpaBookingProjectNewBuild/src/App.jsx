@@ -1,23 +1,3 @@
-// // import { useState } from 'react'
-// // import reactLogo from './assets/react.svg'
-// // import viteLogo from '/vite.svg'
-// import Header from './Header & Footer/Header';
-// import Footer from './Header & Footer/Footer';
-// import AppointmentForm from './Khang-component/AppointmentForm';
-// import './App.css'
-
-// function App() {
-//   return (
-//     <div>
-//       <Header />
-//       <AppointmentForm />
-//       <Footer />
-//     </div>
-//   );
-// }
-
-// export default App
-// import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -29,6 +9,11 @@ import Login from './Auth/login';
 import Register from './Auth/register';
 import Payment from './Auth/Payment';
 import Profile from './Khang-component/Profile';
+import CancelPayment from './Khang-component/CancelURL';
+import Message from './Khang-component/Message';
+import Facial from './Khang-component/Facial';
+import Bodytreatment from './Khang-component/Bodytreatment';
+import Aromatherapy from './Khang-component/aromatherapy';
 // Create theme
 const theme = createTheme({
   palette: {
@@ -67,6 +52,11 @@ function App() {
          <Route path="/register" element={<Register/>}/>
          <Route path="/payment" element={<Payment/>}/>
          <Route path="/profile" element={<Profile/>}/>
+         <Route path="/cancelpayment" element={<CancelPayment/>}/>
+         <Route path="/massage" element={<Message/>}/>
+         <Route path="/facial" element={<Facial/>}/>
+         <Route path="/body-treatment" element={<Bodytreatment/>}/>
+         <Route path="/aromatherapy" element={<Aromatherapy/>}/>
         </Routes>
         <Footer />
       </Router>
