@@ -9,7 +9,7 @@ import {
   Card,
   CardMedia,
   CardContent,
-  CardActions,
+  // CardActions,
   Paper,
   IconButton
 } from '@mui/material'
@@ -23,7 +23,8 @@ import 'swiper/css/navigation'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import '../Khang-component-css/homePage.css'
-
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 // Placeholder images
 const heroImage =
   'https://images.unsplash.com/photo-1600334129128-685c5582fd35?q=80&w=2070&auto=format&fit=crop'
@@ -91,6 +92,22 @@ const HomePage = () => {
         })
     }
   }, [])
+  const handleBookingClick = () => {
+    if (isLoggedIn) {
+      window.location.href = '/appointment'
+    } else {
+      toast.warning('Bạn cần đăng nhập để đặt lịch hẹn!', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        theme: 'colored'
+      })
+      setTimeout(() => {
+        window.location.href = '/login'
+      }, 1500) // Chuyển hướng sau 3.5 giây
+    }
+  }
 
   // Fetch services from API
   useEffect(() => {
@@ -128,7 +145,7 @@ const HomePage = () => {
             <Typography variant='h5' paragraph>
               Experience the ultimate relaxation with our premium spa services
             </Typography>
-            <Button
+            {/* <Button
               variant='contained'
               size='large'
               component={Link}
@@ -149,8 +166,23 @@ const HomePage = () => {
               }}
             >
               Book Now
+            </Button> */}
+            <Button
+              variant='contained'
+              size='large'
+              onClick={handleBookingClick}
+              sx={{
+                mt: 2,
+                backgroundColor: '#4caf50',
+                '&:hover': { backgroundColor: '#388e3c' },
+                borderRadius: '25px',
+                px: 4
+              }}
+            >
+              Book Now
             </Button>
           </Box>
+          <ToastContainer />
         </Container>
       </HeroSection>
 
@@ -164,7 +196,7 @@ const HomePage = () => {
             mb={6}
             fontWeight='medium'
           >
-            Our Services
+            Các dịch vụ của chúng tôi
           </Typography>
           <Swiper
             modules={[Navigation, Pagination]}
@@ -202,8 +234,12 @@ const HomePage = () => {
                     <Typography variant='body2' color='text.secondary'>
                       {service.description}
                     </Typography>
-                    <Typography variant='body1' color='primary' sx={{ mt: 1 }}>
-                      Price: {service.price.toLocaleString()} VND
+                    <Typography
+                      variant='body1'
+                      color='text.secondary'
+                      sx={{ mt: 1 }}
+                    >
+                      Giá tiền: {service.price.toLocaleString()} VND
                     </Typography>
                   </CardContent>
                   {/* <CardActions>
@@ -265,19 +301,20 @@ const HomePage = () => {
                 gutterBottom
                 fontWeight='medium'
               >
-                About Our Spa
+                Về Spa của chúng tôi
               </Typography>
               <Typography variant='body1' paragraph>
-                Welcome to our luxury spa retreat, where tranquility meets
-                rejuvenation. With over 10 years of experience, we provide
-                exceptional spa services designed to nurture your body, mind,
-                and spirit.
+                Chào mừng bạn đến với khu nghỉ dưỡng spa sang trọng của chúng
+                tôi, nơi sự yên bình hòa quyện với sự tái tạo năng lượng. Với
+                hơn 10 năm kinh nghiệm, chúng tôi cung cấp các dịch vụ spa tuyệt
+                vời được thiết kế để nuôi dưỡng cơ thể, tâm trí và tinh thần của
+                bạn.
               </Typography>
               <Typography variant='body1' paragraph>
-                Our team of certified therapists is dedicated to providing
-                personalized treatments that cater to your unique needs. We use
-                only premium, organic products to ensure the best results for
-                our clients.
+                Đội ngũ chuyên viên trị liệu được chứng nhận của chúng tôi cam
+                kết mang đến những liệu trình cá nhân hóa phù hợp với nhu cầu
+                riêng của bạn. Chúng tôi chỉ sử dụng các sản phẩm hữu cơ cao cấp
+                để đảm bảo kết quả tốt nhất cho khách hàng.
               </Typography>
               <Button
                 variant='outlined'
@@ -292,7 +329,7 @@ const HomePage = () => {
                   }
                 }}
               >
-                Learn More About Us
+                Tìm hiểu thêm
               </Button>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -321,27 +358,27 @@ const HomePage = () => {
             mb={6}
             fontWeight='medium'
           >
-            What Our Clients Say
+            Đánh giá của khách hàng
           </Typography>
           <Grid container spacing={4}>
             {[
               {
                 name: 'Minh Anh',
                 comment:
-                  'The massage therapy was incredible! I felt completely renewed after my session. The staff was professional and attentive to my needs.',
+                  'Liệu pháp mát-xa thật tuyệt vời! Tôi cảm thấy hoàn toàn tươi mới sau buổi trị liệu. Đội ngũ nhân viên chuyên nghiệp và chu đáo với nhu cầu của tôi.',
                 rating: 5
               },
               {
                 name: 'Thanh Hoa',
                 comment:
-                  "I've tried many spas, but this one stands out for its exceptional service and peaceful atmosphere. The facial treatment gave my skin a natural glow.",
+                  "Tôi đã thử nhiều spa, nhưng spa này nổi bật vì dịch vụ đặc biệt và không khí yên bình. Liệu pháp chăm sóc da mặt giúp da tôi sáng tự nhiên.",
                 rating: 5
               },
               {
                 name: 'Van Nguyen',
                 comment:
-                  'The aromatherapy session was exactly what I needed after a stressful week. The therapist was knowledgeable and created a custom blend for me.',
-                rating: 4
+                  'Buổi trị liệu bằng hương thơm chính xác là thứ tôi cần sau một tuần căng thẳng. Chuyên gia trị liệu có kiến ​​thức và đã tạo ra một hỗn hợp tùy chỉnh cho tôi.',
+                rating: 5
               }
             ].map((testimonial, index) => (
               <Grid item xs={12} md={4} key={index}>
@@ -380,8 +417,7 @@ const HomePage = () => {
             Ready to Experience Luxury?
           </Typography>
           <Typography variant='h6' paragraph>
-            Book your appointment today and start your journey to relaxation and
-            wellness.
+          Hãy đặt lịch hẹn ngay hôm nay và bắt đầu hành trình thư giãn và chăm sóc sức khỏe.
           </Typography>
           {/* <Button
             variant="contained"
@@ -416,7 +452,7 @@ const HomePage = () => {
               backgroundColor: 'white',
               color: '#4caf50',
               '&:hover': {
-                backgroundColor: '#f5f5f5',
+                backgroundColor: '#f5f5f5'
               },
               borderRadius: '25px',
               px: 4

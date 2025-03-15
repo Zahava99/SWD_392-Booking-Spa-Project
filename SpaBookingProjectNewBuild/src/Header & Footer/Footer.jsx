@@ -26,7 +26,8 @@ import logo from "../assets/logo-image/logo.jpg";
 
 const Footer = () => {
   return (
-    <Box sx={{ bgcolor: '#f5f5f5', pt: 6, pb: 3 }}>
+    //bgcolor: '#f5f5f5'
+    <Box sx={{ bgcolor: 'white', pt: 6, pb: 3 }}>
       <Container maxWidth="lg">
         <Grid container spacing={4}>
           {/* About Us Column */}
@@ -108,7 +109,7 @@ const Footer = () => {
               >
                 Về chúng tôi
               </Link>
-              <Link 
+              {/* <Link 
                 component={RouterLink} 
                 to="/services" 
                 sx={{ 
@@ -118,7 +119,7 @@ const Footer = () => {
                 }}
               >
                 Dịch vụ
-              </Link>
+              </Link> */}
               <Link 
                 component={RouterLink} 
                 to="/blog" 
@@ -193,7 +194,7 @@ const Footer = () => {
                   <AccessTimeIcon sx={{ color: '#f8a488' }} />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Thứ 2 - Chủ nhật: 9:00 - 21:00" 
+                  primary="Thứ 2 - Thứ 7: 9:00 - 21:00" 
                   primaryTypographyProps={{ variant: 'body2', color: '#666' }}
                 />
               </ListItem>
