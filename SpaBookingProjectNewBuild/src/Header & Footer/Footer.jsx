@@ -1,88 +1,3 @@
-// // import React from 'react'
-// import { Grid2, Typography, Link, TextField, Button } from '@mui/material'
-
-// const Footer = () => {
-//   return (
-//     <Grid2
-//       container
-//       spacing={2}
-//       sx={{ padding: 4, backgroundColor: '#f5f5f5' }}
-//     >
-//       <Grid2 item xs={12} md={4}>
-//         <Typography variant='h6'>Contact Information</Typography>
-//         <Typography>6500 Allison Turnpike</Typography>
-//         <Typography>Creminfort, AL 32000-4509</Typography>
-//         <Typography>(123) 34-6-6789</Typography>
-//         <Typography>support@luxuryspa.com</Typography>
-//       </Grid2>
-//       <Grid2 item xs={12} md={4}>
-//         <Typography variant='h6'>Navigation</Typography>
-//         <Link href='#' color='inherit'>
-//           About us
-//         </Link>
-//         <br />
-//         <Link href='#' color='inherit'>
-//           Service
-//         </Link>
-//         <br />
-//         <Link href='#' color='inherit'>
-//           Blog
-//         </Link>
-//         <br />
-//         <Link href='#' color='inherit'>
-//           Team
-//         </Link>
-//         <br />
-//         <Link href='#' color='inherit'>
-//           Contact us
-//         </Link>
-//       </Grid2>
-//       <Grid2 item xs={12} md={4}>
-//         <Typography variant='h6'>Useful Links</Typography>
-//         <Link href='#' color='inherit'>
-//           Login
-//         </Link>
-//         <br />
-//         <Link href='#' color='inherit'>
-//           Register
-//         </Link>
-//         <br />
-//         <Link href='#' color='inherit'>
-//           Galaxy
-//         </Link>
-//         <br />
-//         <Link href='#' color='inherit'>
-//           Terms and Conditions
-//         </Link>
-//         <br />
-//         <Link href='#' color='inherit'>
-//           Privacy Policy
-//         </Link>
-//       </Grid2>
-//       <Grid2 item xs={12}>
-//         <Typography variant='h6'>Newsletter</Typography>
-//         <Typography>
-//           Sign Up to our Newsletter to get the latest news and offers.
-//         </Typography>
-//         <TextField label='Your Email' variant='outlined' />
-//         <Button variant='contained' color='primary'>
-//           Get Retired
-//         </Button>
-//       </Grid2>
-//       <Grid2 item xs={12}>
-//         <Typography align='center'>
-//           © Copyright 2025 All Rights Reserved
-//         </Typography>
-//         <Typography align='center'>
-//           Develop and design by Younas Global Solutions
-//         </Typography>
-//       </Grid2>
-//     </Grid2>
-//   )
-// }
-
-// export default Footer
-// import React from 'react';
 import { 
   Box, 
   Container, 
@@ -111,7 +26,8 @@ import logo from "../assets/logo-image/logo.jpg";
 
 const Footer = () => {
   return (
-    <Box sx={{ bgcolor: '#f5f5f5', pt: 6, pb: 3 }}>
+    //bgcolor: '#f5f5f5'
+    <Box sx={{ bgcolor: 'white', pt: 6, pb: 3 }}>
       <Container maxWidth="lg">
         <Grid container spacing={4}>
           {/* About Us Column */}
@@ -193,7 +109,7 @@ const Footer = () => {
               >
                 Về chúng tôi
               </Link>
-              <Link 
+              {/* <Link 
                 component={RouterLink} 
                 to="/services" 
                 sx={{ 
@@ -203,7 +119,7 @@ const Footer = () => {
                 }}
               >
                 Dịch vụ
-              </Link>
+              </Link> */}
               <Link 
                 component={RouterLink} 
                 to="/blog" 
@@ -278,7 +194,7 @@ const Footer = () => {
                   <AccessTimeIcon sx={{ color: '#f8a488' }} />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Thứ 2 - Chủ nhật: 9:00 - 21:00" 
+                  primary="Thứ 2 - Thứ 7: 9:00 - 21:00" 
                   primaryTypographyProps={{ variant: 'body2', color: '#666' }}
                 />
               </ListItem>

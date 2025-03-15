@@ -1,4 +1,4 @@
-import { useRef,useEffect,useState } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import axios from 'axios'
 import {
   Box,
@@ -9,24 +9,23 @@ import {
   Card,
   CardMedia,
   CardContent,
-  CardActions,
+  // CardActions,
   Paper,
   IconButton
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import StarIcon from '@mui/icons-material/Star'
 import { Link } from 'react-router-dom'
-
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Pagination } from 'swiper/modules'
-// Import Swiper styles
 import 'swiper/css'
 import 'swiper/css/navigation'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-
 import '../Khang-component-css/homePage.css'
-// Placeholder images - replace with actual images in your project
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+// Placeholder images
 const heroImage =
   'https://images.unsplash.com/photo-1600334129128-685c5582fd35?q=80&w=2070&auto=format&fit=crop'
 const service1 =
@@ -37,6 +36,9 @@ const service3 =
   'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?q=80&w=2070&auto=format&fit=crop'
 const service4 =
   'https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=2070&auto=format&fit=crop'
+
+// Array of service images to cycle through
+const serviceImages = [service1, service2, service3, service4]
 
 const HeroSection = styled(Box)(() => ({
   backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${heroImage})`,
@@ -66,55 +68,66 @@ const TestimonialCard = styled(Paper)(({ theme }) => ({
   flexDirection: 'column',
   backgroundColor: '#f8f9fa'
 }))
+
 const HomePage = () => {
   const prevRef = useRef(null)
   const nextRef = useRef(null)
 
-
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [services, setServices] = useState([])
+
+  // Check login status
   useEffect(() => {
     const token = sessionStorage.getItem('token')
     if (token) {
-      axios.get('http://localhost:3000/api/auth/profile', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      axios
+        .get('http://localhost:3000/api/auth/profile', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
         .then(response => {
-          setIsLoggedIn(true);
+          setIsLoggedIn(true)
         })
         .catch(() => {
-          setIsLoggedIn(false);
-        });
+          setIsLoggedIn(false)
+        })
     }
   }, [])
-
-
-  // Danh sách dịch vụ
-  const services = [
-    {
-      title: 'Massage Therapy',
-      image: service1,
-      description:
-        'Relieve tension and promote relaxation with our therapeutic massage treatments.'
-    },
-    {
-      title: 'Facial Treatments',
-      image: service2,
-      description:
-        'Rejuvenate your skin with our customized facial treatments for all skin types.'
-    },
-    {
-      title: 'Body Treatments',
-      image: service3,
-      description:
-        'Pamper your body with our luxurious scrubs, wraps, and therapeutic treatments.'
-    },
-    {
-      title: 'Aromatherapy',
-      image: service4,
-      description:
-        'Experience the healing power of essential oils with our aromatherapy services.'
+  const handleBookingClick = () => {
+    if (isLoggedIn) {
+      window.location.href = '/appointment'
+    } else {
+      toast.warning('Bạn cần đăng nhập để đặt lịch hẹn!', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        theme: 'colored'
+      })
+      setTimeout(() => {
+        window.location.href = '/login'
+      }, 1500) // Chuyển hướng sau 3.5 giây
     }
-  ]
+  }
+
+  // Fetch services from API
+  useEffect(() => {
+    axios
+      .get('https://6670f800e083e62ee4399f31.mockapi.io/API/Test01')
+      .then(response => {
+        const fetchedServices = response.data.map((service, index) => ({
+          id: service.id,
+          title: service.name,
+          image: serviceImages[index % serviceImages.length],
+          description: service.description,
+          price: service.price
+        }))
+        setServices(fetchedServices)
+      })
+      .catch(error => {
+        console.error('Error fetching services:', error)
+      })
+  }, [])
+
   return (
     <Box>
       {/* Hero Section */}
@@ -132,11 +145,10 @@ const HomePage = () => {
             <Typography variant='h5' paragraph>
               Experience the ultimate relaxation with our premium spa services
             </Typography>
-            <Button
+            {/* <Button
               variant='contained'
               size='large'
               component={Link}
-              // to='/appointment'
               onClick={() => {
                 if (isLoggedIn) {
                   window.location.href = '/appointment'
@@ -154,8 +166,23 @@ const HomePage = () => {
               }}
             >
               Book Now
+            </Button> */}
+            <Button
+              variant='contained'
+              size='large'
+              onClick={handleBookingClick}
+              sx={{
+                mt: 2,
+                backgroundColor: '#4caf50',
+                '&:hover': { backgroundColor: '#388e3c' },
+                borderRadius: '25px',
+                px: 4
+              }}
+            >
+              Book Now
             </Button>
           </Box>
+          <ToastContainer />
         </Container>
       </HeroSection>
 
@@ -169,53 +196,21 @@ const HomePage = () => {
             mb={6}
             fontWeight='medium'
           >
-            Our Services
+            Các dịch vụ của chúng tôi
           </Typography>
-          {/*           
-          <Grid container spacing={4}>
-            {[
-              { title: 'Massage Therapy', image: service1, description: 'Relieve tension and promote relaxation with our therapeutic massage treatments.' },
-              { title: 'Facial Treatments', image: service2, description: 'Rejuvenate your skin with our customized facial treatments for all skin types.' },
-              { title: 'Body Treatments', image: service3, description: 'Pamper your body with our luxurious scrubs, wraps, and therapeutic treatments.' },
-              { title: 'Aromatherapy', image: service4, description: 'Experience the healing power of essential oils with our aromatherapy services.' }
-            ].map((service, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
-                <ServiceCard>
-                  <CardMedia
-                    component="img"
-                    height="200"
-                    image={service.image}
-                    alt={service.title}
-                  />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="h3">
-                      {service.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {service.description}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small" color="primary">Learn More</Button>
-                  </CardActions>
-                </ServiceCard>
-              </Grid>
-            ))}
-          </Grid> */}
           <Swiper
             modules={[Navigation, Pagination]}
             spaceBetween={20}
             slidesPerView={3}
             autoplay={{ delay: 3000, disableOnInteraction: false }}
-            // Gán ref cho navigation trong onBeforeInit
-            onSwiper={(swiper) => {
+            onSwiper={swiper => {
               setTimeout(() => {
-                swiper.params.navigation.prevEl = prevRef.current;
-                swiper.params.navigation.nextEl = nextRef.current;
-                swiper.navigation.destroy();
-                swiper.navigation.init();
-                swiper.navigation.update();
-              }, 100); // Đợi 100ms để ref được gán
+                swiper.params.navigation.prevEl = prevRef.current
+                swiper.params.navigation.nextEl = nextRef.current
+                swiper.navigation.destroy()
+                swiper.navigation.init()
+                swiper.navigation.update()
+              }, 100)
             }}
             breakpoints={{
               600: { slidesPerView: 1 },
@@ -223,8 +218,8 @@ const HomePage = () => {
               1280: { slidesPerView: 3 }
             }}
           >
-            {services.map((service, index) => (
-              <SwiperSlide key={index}>
+            {services.map(service => (
+              <SwiperSlide key={service.id}>
                 <ServiceCard>
                   <CardMedia
                     component='img'
@@ -239,12 +234,19 @@ const HomePage = () => {
                     <Typography variant='body2' color='text.secondary'>
                       {service.description}
                     </Typography>
+                    <Typography
+                      variant='body1'
+                      color='text.secondary'
+                      sx={{ mt: 1 }}
+                    >
+                      Giá tiền: {service.price.toLocaleString()} VND
+                    </Typography>
                   </CardContent>
-                  <CardActions>
-                    <Button size='small' color='primary'>
+                  {/* <CardActions>
+                    <Button size="small" color="primary">
                       Learn More
                     </Button>
-                  </CardActions>
+                  </CardActions> */}
                 </ServiceCard>
               </SwiperSlide>
             ))}
@@ -299,19 +301,20 @@ const HomePage = () => {
                 gutterBottom
                 fontWeight='medium'
               >
-                About Our Spa
+                Về Spa của chúng tôi
               </Typography>
               <Typography variant='body1' paragraph>
-                Welcome to our luxury spa retreat, where tranquility meets
-                rejuvenation. With over 10 years of experience, we provide
-                exceptional spa services designed to nurture your body, mind,
-                and spirit.
+                Chào mừng bạn đến với khu nghỉ dưỡng spa sang trọng của chúng
+                tôi, nơi sự yên bình hòa quyện với sự tái tạo năng lượng. Với
+                hơn 10 năm kinh nghiệm, chúng tôi cung cấp các dịch vụ spa tuyệt
+                vời được thiết kế để nuôi dưỡng cơ thể, tâm trí và tinh thần của
+                bạn.
               </Typography>
               <Typography variant='body1' paragraph>
-                Our team of certified therapists is dedicated to providing
-                personalized treatments that cater to your unique needs. We use
-                only premium, organic products to ensure the best results for
-                our clients.
+                Đội ngũ chuyên viên trị liệu được chứng nhận của chúng tôi cam
+                kết mang đến những liệu trình cá nhân hóa phù hợp với nhu cầu
+                riêng của bạn. Chúng tôi chỉ sử dụng các sản phẩm hữu cơ cao cấp
+                để đảm bảo kết quả tốt nhất cho khách hàng.
               </Typography>
               <Button
                 variant='outlined'
@@ -326,7 +329,7 @@ const HomePage = () => {
                   }
                 }}
               >
-                Learn More About Us
+                Tìm hiểu thêm
               </Button>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -355,28 +358,27 @@ const HomePage = () => {
             mb={6}
             fontWeight='medium'
           >
-            What Our Clients Say
+            Đánh giá của khách hàng
           </Typography>
-
           <Grid container spacing={4}>
             {[
               {
                 name: 'Minh Anh',
                 comment:
-                  'The massage therapy was incredible! I felt completely renewed after my session. The staff was professional and attentive to my needs.',
+                  'Liệu pháp mát-xa thật tuyệt vời! Tôi cảm thấy hoàn toàn tươi mới sau buổi trị liệu. Đội ngũ nhân viên chuyên nghiệp và chu đáo với nhu cầu của tôi.',
                 rating: 5
               },
               {
                 name: 'Thanh Hoa',
                 comment:
-                  "I've tried many spas, but this one stands out for its exceptional service and peaceful atmosphere. The facial treatment gave my skin a natural glow.",
+                  "Tôi đã thử nhiều spa, nhưng spa này nổi bật vì dịch vụ đặc biệt và không khí yên bình. Liệu pháp chăm sóc da mặt giúp da tôi sáng tự nhiên.",
                 rating: 5
               },
               {
                 name: 'Van Nguyen',
                 comment:
-                  'The aromatherapy session was exactly what I needed after a stressful week. The therapist was knowledgeable and created a custom blend for me.',
-                rating: 4
+                  'Buổi trị liệu bằng hương thơm chính xác là thứ tôi cần sau một tuần căng thẳng. Chuyên gia trị liệu có kiến ​​thức và đã tạo ra một hỗn hợp tùy chỉnh cho tôi.',
+                rating: 5
               }
             ].map((testimonial, index) => (
               <Grid item xs={12} md={4} key={index}>
@@ -415,12 +417,36 @@ const HomePage = () => {
             Ready to Experience Luxury?
           </Typography>
           <Typography variant='h6' paragraph>
-            Book your appointment today and start your journey to relaxation and
-            wellness.
+          Hãy đặt lịch hẹn ngay hôm nay và bắt đầu hành trình thư giãn và chăm sóc sức khỏe.
           </Typography>
+          {/* <Button
+            variant="contained"
+            size="large"
+            sx={{
+              mt: 2,
+              backgroundColor: 'white',
+              color: '#4caf50',
+              '&:hover': {
+                backgroundColor: '#f5f5f5',
+              },
+              borderRadius: '25px',
+              px: 4,
+            }}
+          >
+            Book Now
+          </Button> */}
           <Button
             variant='contained'
             size='large'
+            component={Link}
+            onClick={() => {
+              if (isLoggedIn) {
+                window.location.href = '/appointment'
+              } else {
+                alert('Bạn cần đăng nhập để đặt lịch hẹn!')
+                window.location.href = '/login'
+              }
+            }}
             sx={{
               mt: 2,
               backgroundColor: 'white',
