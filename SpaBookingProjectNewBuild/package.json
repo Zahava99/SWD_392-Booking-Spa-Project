@@ -12,11 +12,11 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^6.4.6",
+    "@mui/icons-material": "^6.4.7",
     "@mui/material": "^6.4.5",
     "@mui/x-date-pickers": "^7.27.3",
     "axios": "^1.8.0",
-    "date-fns": "^2.21.3",
+    "date-fns": "^2.30.0",
     "dayjs": "^1.11.13",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

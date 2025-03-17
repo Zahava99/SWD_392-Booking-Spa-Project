@@ -25,7 +25,6 @@ import {
   Add as AddIcon,
 } from "@mui/icons-material";
 
-// Mock data for calendar events
 const mockEvents = [
   {
     id: 1,
@@ -140,40 +139,31 @@ export default function AdminCalendar() {
   };
 
   const handleAddBooking = () => {
-    // Logic to add a new booking
     setOpenDialog(false);
   };
 
-  // Generate calendar days
   const generateCalendarDays = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
-    // First day of the month
     const firstDay = new Date(year, month, 1);
-    // Last day of the month
+
     const lastDay = new Date(year, month + 1, 0);
 
-    // Day of the week for the first day (0 = Sunday, 6 = Saturday)
     const firstDayOfWeek = firstDay.getDay();
 
-    // Total days in the month
     const daysInMonth = lastDay.getDate();
 
-    // Array to hold all calendar days
     const days = [];
 
-    // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDayOfWeek; i++) {
       days.push(null);
     }
 
-    // Add days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
       const dateString = date.toISOString().split("T")[0];
 
-      // Get events for this day
       const dayEvents = mockEvents.filter((event) => event.date === dateString);
 
       days.push({
@@ -190,13 +180,11 @@ export default function AdminCalendar() {
   const calendarDays = generateCalendarDays();
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-  // Format the month and year for display
   const monthYearString = currentDate.toLocaleString("default", {
     month: "long",
     year: "numeric",
   });
 
-  // Get events for the selected date
   const selectedDateEvents = selectedDate
     ? mockEvents.filter((event) => event.date === selectedDate)
     : [];
@@ -222,7 +210,6 @@ export default function AdminCalendar() {
         </Box>
 
         <Grid container spacing={1}>
-          {/* Weekday headers */}
           {weekdays.map((day, index) => (
             <Grid item xs={12 / 7} key={index}>
               <Box
@@ -238,7 +225,6 @@ export default function AdminCalendar() {
             </Grid>
           ))}
 
-          {/* Calendar days */}
           {calendarDays.map((dayData, index) => (
             <Grid item xs={12 / 7} key={index}>
               {dayData ? (
@@ -311,7 +297,6 @@ export default function AdminCalendar() {
         </Grid>
       </Paper>
 
-      {/* Add New Booking Button */}
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Button
           variant="contained"
@@ -322,7 +307,6 @@ export default function AdminCalendar() {
         </Button>
       </Box>
 
-      {/* Dialog for adding/viewing bookings */}
       <Dialog
         open={openDialog}
         onClose={handleCloseDialog}
