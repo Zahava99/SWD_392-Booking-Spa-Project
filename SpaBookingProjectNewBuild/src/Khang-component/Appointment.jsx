@@ -39,32 +39,6 @@ const Appointment = () => {
   //
   const navigate = useNavigate()
   //
-  //Test
-  //http://localhost:3000/api/category
-  // useEffect(() => {
-  //   const fetchCategories = async () => {
-  //     try {
-  //       const token = sessionStorage.getItem('token'); // Lấy token từ Local Storage
-  //       if (!token) {
-  //         console.error('No token found, please log in.');
-  //         return;
-  //       }
-
-  //       const response = await axios.get('http://localhost:3000/api/category', {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`
-  //         }
-  //       });
-
-  //       if (response.data && response.data.data) {
-  //         setSubjects(response.data.data.map(item => item.name));
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching categories:', error.response?.data || error.message);
-  //     }
-  //   };
-  //   fetchCategories();
-  // }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -109,29 +83,15 @@ const Appointment = () => {
   //
 
   const handleChange = e => {
-    // const { name, value } = e.target
-    // setFormData(prevState => ({
-    //   ...prevState,
-    //   [name]: value
-    // }))
-    // const { name, value } = e.target
-    // setFormData(prevState => ({
-    //   ...prevState,
-    //   [name]: value
-    // }))
 
-    // if (name === 'subject') {
-    //   filterServices(value)
-    // }
-    // console.log(filterServices(value));
     const { name, value } = e.target
     if (name === 'subject') {
       setFormData(prevState => ({
         ...prevState,
         subject: value,
-        service: '' // Đặt lại service khi subject thay đổi
+        service: ''
       }))
-      filterServices(value) // Cập nhật filteredServices dựa trên subject mới
+      filterServices(value)
     } else {
       setFormData(prevState => ({
         ...prevState,
@@ -142,15 +102,6 @@ const Appointment = () => {
   useEffect(() => {
     console.log('Filtered services:', filteredServices)
   }, [filteredServices])
-  // const filterServices = selectedSubject => {
-  //   const subjectObj = subjects.find(sub => sub.name === selectedSubject)
-  //   if (!subjectObj) return
-
-  //   const filtered = services.filter(service =>
-  //     service.categories.includes(subjectObj.id)
-  //   )
-  //   setFilteredServices(filtered)
-  // }
   const filterServices = selectedSubject => {
     const filtered = services.filter(service =>
       service.categories.some(catId => catId == selectedSubject)
@@ -166,39 +117,70 @@ const Appointment = () => {
     }))
   }
 
-  const handleSubmit = e => {
-    // e.preventDefault()
-    // console.log(formData)
-    // // Here you would typically send the data to your backend
-    // alert('Appointment request submitted!')
+  const handleSubmit = async e => {
     e.preventDefault()
     console.log(formData)
+  
+    // Lấy token từ sessionStorage (nếu cần xác thực)
+    const token = sessionStorage.getItem('token')
+    if (!token) {
+      console.error('No token found, please log in.')
+      return
+    }
+    const profileResponse = await axios.get("http://localhost:3000/api/auth/profile", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-    // Tìm dịch vụ đã chọn từ filteredServices
+    const customerId = profileResponse.data.data.id;
+    console.log("Customer DATA.ID:", profileResponse.data.data.id);
+    console.log("Customer ID:", customerId);
+
+    // Tìm dịch vụ đã chọn từ filteredServices (để truyền dữ liệu sang trang Payment)
     const selectedService = filteredServices.find(
       service => service.id === formData.service
     )
-
-    // Chuyển hướng sang trang Payment và truyền dữ liệu formData + selectedService
-    navigate('/payment', {
-      state: {
-        formData,
-        selectedService
-      }
-    })
+  
+    const payload = {
+      customer: customerId,
+      spa: "67cc0adaace5f25ef430927f",
+      spaStaff: "67cd40d6a198bf386d304364",
+      customerName: formData.fullName,
+      customerPhone: formData.phone,
+      customerEmail: formData.email,
+      total: 0,
+      status: 0,
+      services: [formData.service] // sử dụng id của service được chọn
+    }
+  
+    try {
+      // Gọi API tạo appointment
+      const appointmentResponse = await axios.post(
+        'http://localhost:3000/api/appointments',
+        payload,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      )
+      console.log('Appointment created:', appointmentResponse.data)
+      const appointmentId = appointmentResponse.data._id;
+      localStorage.setItem("appointmentId", appointmentId);
+      // Sau khi tạo appointment thành công, chuyển hướng sang trang Payment
+      navigate('/payment', {
+        state: {
+          formData,
+          selectedService,
+          appointment: appointmentResponse.data
+        }
+      })
+    } catch (error) {
+      console.error(
+        'Error creating appointment:',
+        error.response?.data || error.message
+      )
+    }
   }
-
-  // const subjects = [
-  //   'Massage',
-  //   'Facial',
-  //   'Body Treatment',
-  //   'Aromatherapy',
-  //   'Other'
-  // ]
-
   return (
     <>
-      {/* Hero Section with Background Image */}
       <Box
         sx={{
           height: '300px',

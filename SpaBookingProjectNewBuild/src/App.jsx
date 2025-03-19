@@ -9,8 +9,13 @@ import Login from "./Auth/login";
 import Register from "./Auth/register";
 import Payment from "./Auth/Payment";
 import Profile from "./Khang-component/Profile";
-import AdminDashboard from "./admin/AdminDashboard";
+import CancelPayment from "./Khang-component/CancelURL";
+import Message from "./Khang-component/Message";
+import Facial from "./Khang-component/Facial";
+import Bodytreatment from "./Khang-component/Bodytreatment";
+import Aromatherapy from "./Khang-component/aromatherapy";
 
+import AdminDashboard from "./admin/AdminDashboard";
 // Create theme
 const theme = createTheme({
   palette: {
@@ -44,11 +49,16 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/appointment" element={<Appointment />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/cancelpayment" element={<CancelPayment />} />
+          <Route path="/massage" element={<Message />} />
+          <Route path="/facial" element={<Facial />} />
+          <Route path="/body-treatment" element={<Bodytreatment />} />
+          <Route path="/aromatherapy" element={<Aromatherapy />} />
         </Routes>
         <Footer />
       </Router>

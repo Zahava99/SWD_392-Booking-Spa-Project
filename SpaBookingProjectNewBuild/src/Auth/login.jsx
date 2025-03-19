@@ -9,7 +9,7 @@ import {
   Paper,
   Breadcrumbs,
   Link as MuiLink,
-  Divider,
+  // Divider,
   IconButton,
   InputAdornment,
   Checkbox,
@@ -19,11 +19,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import HomeIcon from '@mui/icons-material/Home'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
-import FacebookIcon from '@mui/icons-material/Facebook'
-import GoogleIcon from '@mui/icons-material/Google'
+// import FacebookIcon from '@mui/icons-material/Facebook'
+// import GoogleIcon from '@mui/icons-material/Google'
 import axios from 'axios'
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 const Login = () => {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
@@ -33,8 +33,10 @@ const Login = () => {
     rememberMe: false
   })
   const [
+    ,
     // error
-    , setError] = useState('');
+    setError
+  ] = useState('')
   const handleChange = e => {
     const { name, value, checked } = e.target
     setFormData(prevState => ({
@@ -48,10 +50,9 @@ const Login = () => {
   }
 
   const handleSubmit = async e => {
-    e.preventDefault();
-    setError('');
+    e.preventDefault()
+    setError('')
     console.log(formData)
-    // Here you would typically authenticate the user
     try {
       const response = await axios.post(
         'http://localhost:3000/api/auth/login',
@@ -60,39 +61,37 @@ const Login = () => {
           password: formData.password
         }
       )
-      console.log('LoL',response.data)
+      console.log('LoL', response.data)
       if (response.data.data.accessToken) {
         sessionStorage.setItem('token', response.data.data.accessToken)
+        window.dispatchEvent(new Event('authChange'))
         navigate('/')
-      }else {
-        toast.error(response.data.message || 'Login failed',{autoClose: 2000});
-        setError(response.data.message || 'Login failed');
+      } else {
+        toast.error(response.data.message || 'Login failed', {
+          autoClose: 2000
+        })
+        setError(response.data.message || 'Login failed')
       }
     } catch (error) {
-      // Handle login error
       console.error(error)
-      setError( error.response.data.message || 'Server Error');
-      if(error.response){
-        const {status, data} = error.response;
+      setError(error.response.data.message || 'Server Error')
+      if (error.response) {
+        const { status, data } = error.response
         if (status === 401) {
-          toast.error(data.message || 'Login failed',{autoClose: 2000});
-        }else {
-          toast.error(data.message || 'Server Error',{autoClose: 2000});
+          toast.error(data.message || 'Login failed', { autoClose: 2000 })
+        } else {
+          toast.error(data.message || 'Server Error', { autoClose: 2000 })
         }
-        setError(data.message || 'Server Error888');
-      }else{
-        toast.error(error.message || 'Server Error',{autoClose: 2000});
-        setError(error.message || 'Server Error');
+        setError(data.message || 'Server Error888')
+      } else {
+        toast.error(error.message || 'Server Error', { autoClose: 2000 })
+        setError(error.message || 'Server Error')
       }
     }
-    
-    // alert('Login successful!');
-    // navigate('/');
   }
 
   return (
     <>
-      {/* Hero Section with Background Image */}
       <Box
         sx={{
           height: '300px',
@@ -244,7 +243,7 @@ const Login = () => {
                       }
                       label='Ghi nhớ đăng nhập'
                     />
-                    <MuiLink
+                    {/* <MuiLink
                       component={Link}
                       to='/forgot-password'
                       sx={{
@@ -256,7 +255,7 @@ const Login = () => {
                       }}
                     >
                       Quên mật khẩu?
-                    </MuiLink>
+                    </MuiLink> */}
                   </Grid>
                   <Grid item xs={12}>
                     <Button
@@ -279,7 +278,7 @@ const Login = () => {
                 </Grid>
               </Box>
 
-              <Box sx={{ mt: 3, mb: 3 }}>
+              {/* <Box sx={{ mt: 3, mb: 3 }}>
                 <Divider>
                   <Typography variant='body2' sx={{ color: '#666', px: 1 }}>
                     Hoặc đăng nhập với
@@ -326,7 +325,7 @@ const Login = () => {
                     Google
                   </Button>
                 </Grid>
-              </Grid>
+              </Grid> */}
 
               <Box sx={{ mt: 4, textAlign: 'center' }}>
                 <Typography variant='body2' sx={{ color: '#666' }}>
@@ -351,7 +350,7 @@ const Login = () => {
           </Grid>
         </Grid>
       </Container>
-      <ToastContainer position="top-right" />
+      <ToastContainer position='top-right' />
     </>
   )
 }
