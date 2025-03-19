@@ -73,6 +73,7 @@ export default function BookingsList({ limit, filterToday }) {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(
           "http://localhost:3000/api/appointments",
+
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -175,18 +176,14 @@ export default function BookingsList({ limit, filterToday }) {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((booking) => (
                     <TableRow key={booking.id} hover>
-                      <TableCell>{booking.id}</TableCell>
+                      <TableCell>{booking._id}</TableCell>
                       <TableCell>{booking.customerName}</TableCell>
                       <TableCell>{booking.service}</TableCell>
                       <TableCell>{booking.date}</TableCell>
                       <TableCell>{booking.time}</TableCell>
                       <TableCell>{getStatusChip(booking.status)}</TableCell>
-                      <TableCell>
-                        {PaymentMethodEnum[booking.paymentMethod]}
-                      </TableCell>
-                      <TableCell>
-                        {PaymentStatusEnum[booking.paymentStatus]}
-                      </TableCell>
+                      <TableCell>{PaymentMethodEnum[booking.method]}</TableCell>
+                      <TableCell>{PaymentStatusEnum[booking.status]}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

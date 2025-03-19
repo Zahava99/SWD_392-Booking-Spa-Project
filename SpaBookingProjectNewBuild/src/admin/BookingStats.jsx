@@ -27,9 +27,12 @@ export default function BookingStats() {
     const fetchStats = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const response = await axios.get("http://localhost:3000/api/stats", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(
+          "http://localhost:3000/api/appointments",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setStats(response.data);
       } catch (error) {
         setError("Failed to load statistics.");

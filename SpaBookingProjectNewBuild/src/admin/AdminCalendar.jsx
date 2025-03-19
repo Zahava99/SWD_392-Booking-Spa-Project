@@ -110,6 +110,20 @@ const mockEvents = [
     time: "3:00 PM",
     status: "confirmed",
   },
+  {
+    id: 13,
+    title: "Charles Harris - Deep Tissue Massage",
+    date: "2025-03-22",
+    time: "3:00 PM",
+    status: "confirmed",
+  },
+  {
+    id: 14,
+    title: "Charles Harris - Deep Tissue Massage",
+    date: "2025-03-22",
+    time: "3:00 PM",
+    status: "confirmed",
+  },
 ];
 
 export default function AdminCalendar() {
