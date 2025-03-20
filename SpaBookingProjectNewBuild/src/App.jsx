@@ -14,7 +14,7 @@ import Message from "./Khang-component/Message";
 import Facial from "./Khang-component/Facial";
 import Bodytreatment from "./Khang-component/Bodytreatment";
 import Aromatherapy from "./Khang-component/aromatherapy";
-
+import Blog from "./staff/Blog";
 import AdminDashboard from "./admin/AdminDashboard";
 // Create theme
 const theme = createTheme({
@@ -59,6 +59,8 @@ function App() {
           <Route path="/facial" element={<Facial />} />
           <Route path="/body-treatment" element={<Bodytreatment />} />
           <Route path="/aromatherapy" element={<Aromatherapy />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/blog" element={<Blog />} />
         </Routes>
         <Footer />
       </Router>
