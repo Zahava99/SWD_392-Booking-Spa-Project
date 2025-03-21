@@ -16,7 +16,11 @@ import {
 import { Link } from 'react-router-dom'
 import HomeIcon from '@mui/icons-material/Home'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers'
+import {
+  LocalizationProvider,
+  DatePicker,
+  TimePicker
+} from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import axios from 'axios'
 const tomorrow = dayjs().add(1, 'day')
@@ -27,6 +31,7 @@ const Appointment = () => {
   const [filteredServices, setFilteredServices] = useState([])
   //
   const [selectedDate, setSelectedDate] = useState(null)
+  const [selectedTime, setSelectedTime] = useState(dayjs().hour(8).minute(0))
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -83,7 +88,6 @@ const Appointment = () => {
   //
 
   const handleChange = e => {
-
     const { name, value } = e.target
     if (name === 'subject') {
       setFormData(prevState => ({
@@ -116,42 +120,49 @@ const Appointment = () => {
       date: date
     }))
   }
-
+  const handleTimeChange = time => {
+    setSelectedTime(time)
+  }
   const handleSubmit = async e => {
     e.preventDefault()
     console.log(formData)
-  
+
     // Lấy token từ sessionStorage (nếu cần xác thực)
     const token = sessionStorage.getItem('token')
     if (!token) {
       console.error('No token found, please log in.')
       return
     }
-    const profileResponse = await axios.get("http://localhost:3000/api/auth/profile", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const profileResponse = await axios.get(
+      'http://localhost:3000/api/auth/profile',
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    )
 
-    const customerId = profileResponse.data.data.id;
-    console.log("Customer DATA.ID:", profileResponse.data.data.id);
-    console.log("Customer ID:", customerId);
+    const customerId = profileResponse.data.data.id
+    console.log('Customer DATA.ID:', profileResponse.data.data.id)
+    console.log('Customer ID:', customerId)
 
     // Tìm dịch vụ đã chọn từ filteredServices (để truyền dữ liệu sang trang Payment)
     const selectedService = filteredServices.find(
       service => service.id === formData.service
     )
-  
+    const formattedTime = selectedTime ? selectedTime.format('HH:mm') : ''
     const payload = {
       customer: customerId,
-      spa: "67cc0adaace5f25ef430927f",
-      spaStaff: "67cd40d6a198bf386d304364",
+      spa: '67cc0adaace5f25ef430927f',
+      spaStaff: '67cd40d6a198bf386d304364',
       customerName: formData.fullName,
       customerPhone: formData.phone,
       customerEmail: formData.email,
       total: 0,
       status: 0,
-      services: [formData.service] // sử dụng id của service được chọn
+      services: [formData.service], // sử dụng id của service được chọn
+      date: selectedDate,
+      time: formattedTime
     }
-  
+
     try {
       // Gọi API tạo appointment
       const appointmentResponse = await axios.post(
@@ -162,8 +173,8 @@ const Appointment = () => {
         }
       )
       console.log('Appointment created:', appointmentResponse.data)
-      const appointmentId = appointmentResponse.data._id;
-      localStorage.setItem("appointmentId", appointmentId);
+      const appointmentId = appointmentResponse.data._id
+      localStorage.setItem('appointmentId', appointmentId)
       // Sau khi tạo appointment thành công, chuyển hướng sang trang Payment
       navigate('/payment', {
         state: {
@@ -299,7 +310,7 @@ const Appointment = () => {
                     variant='outlined'
                   />
                 </Grid2>
-                <Grid2 item size={{ xs: 6, md: 6 }}>
+                <Grid2 item size={{ xs: 3, md: 2}}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       label='Date'
@@ -318,6 +329,31 @@ const Appointment = () => {
                       )}
                     />
                   </LocalizationProvider>
+                </Grid2>
+                <Grid2 item size={{ xs: 3, md: 2 }} sx={{ paddingLeft: '0px'}}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <TimePicker
+                      label='Select Time'
+                      value={selectedTime}
+                      onChange={handleTimeChange}
+                      // Giới hạn giờ từ 8:00 đến 20:00
+                      minTime={dayjs().hour(8).minute(0)}
+                      maxTime={dayjs().hour(20).minute(0)}
+                      renderInput={params => (
+                        <TextField
+                          {...params}
+                          fullWidth
+                          required
+                          variant='outlined'
+                        />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Grid2>
+                <Grid2>
+                  <Typography>
+                    <span style={{ color: 'red' }}>*</span> Chon tu 8h den 20h
+                  </Typography>
                 </Grid2>
                 <Grid2 item size={{ xs: 12, md: 12 }}>
                   {/* <TextField
