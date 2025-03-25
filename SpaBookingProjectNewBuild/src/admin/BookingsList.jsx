@@ -142,7 +142,7 @@ export default function BookingsList({ limit, filterToday }) {
                 <TableCell>ID</TableCell>
                 <TableCell>Customer</TableCell>
                 <TableCell>Services</TableCell>
-                <TableCell>Status</TableCell>
+                <TableCell>Appointment Status</TableCell>
                 <TableCell>Payment Status</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell>Time</TableCell>
