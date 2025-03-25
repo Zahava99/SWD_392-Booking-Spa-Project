@@ -24,6 +24,7 @@ import {
 import dayjs from 'dayjs'
 import axios from 'axios'
 const tomorrow = dayjs().add(1, 'day')
+const currentDate = dayjs().add(0, 'day')
 const Appointment = () => {
   //Test
   const [subjects, setSubjects] = useState([])
@@ -316,7 +317,8 @@ const Appointment = () => {
                       label='Date'
                       value={selectedDate}
                       onChange={handleDateChange}
-                      defaultValue={tomorrow}
+                      // defaultValue={tomorrow}
+                      // defaultValue={currentDate}
                       // disableFuture
                       disablePast
                       renderInput={params => (

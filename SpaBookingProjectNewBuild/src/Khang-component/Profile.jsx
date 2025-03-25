@@ -14,7 +14,16 @@ import {
   IconButton,
   Card,
   Snackbar,
-  Alert
+  Alert,
+  Modal,
+  List,
+  ListItem,
+  ListItemText,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  CardContent
   // CardContent,
 } from '@mui/material'
 import { Link } from 'react-router-dom'
@@ -24,7 +33,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers'
 import { format } from 'date-fns'
-
+import EventIcon from '@mui/icons-material/Event'
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [avatarPreview, setAvatarPreview] = useState(null)
@@ -45,6 +54,14 @@ const Profile = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState('')
   const [snackbarSeverity, setSnackbarSeverity] = useState('success')
+  // State cho Modal Appointment
+  const [openModal, setOpenModal] = useState(false)
+  const [appointments, setAppointments] = useState([])
+  const [loadingAppointments, setLoadingAppointments] = useState(false)
+  //Filter
+  const [filteredAppointments, setFilteredAppointments] = useState([])
+  //gẻtt sercive name
+  const [services, setServices] = useState([])
   useEffect(() => {
     const token = sessionStorage.getItem('token')
     if (token) {
@@ -55,6 +72,8 @@ const Profile = () => {
         .then(response => {
           console.log('GET Response:', response.data)
           if (response.data && response.data.data) {
+            console.log('Danh sách người dùng:', response.data.data)
+
             setUserData(response.data.data)
             setAvatarPreview(response.data.data.avt || '')
           } else {
@@ -138,6 +157,109 @@ const Profile = () => {
     }
   }
 
+  const handleOpenModal = () => {
+    setOpenModal(true)
+    fetchAppointments()
+  }
+
+  // Hàm gọi API lấy danh sách appointments
+  const fetchAppointments = () => {
+    setLoadingAppointments(true)
+    const token = sessionStorage.getItem('token')
+
+    axios
+      .get('http://localhost:3000/api/appointments', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(response => {
+        console.log('Danh sách cuộc hẹn:', response.data)
+
+        setAppointments(response.data || [])
+        setLoadingAppointments(false)
+      })
+      .catch(error => {
+        console.error('Lỗi khi lấy danh sách cuộc hẹn:', error)
+        setLoadingAppointments(false)
+      })
+  }
+  // useEffect(() => {
+  //   if (userData && appointments.length > 0) {
+  //     const filtered = appointments.filter(app =>
+  //       app.customer.includes(userData._id)
+  //     )
+  //     console.log('Filtered Appointments:', filtered);
+  //     setFilteredAppointments(filtered)
+  //   }
+  // }, [userData, appointments])
+  useEffect(() => {
+    if (userData && appointments.length > 0) {
+      // console.log('User Data:', userData)
+      // console.log('User ID:', userData.id)
+      // console.log('Appointments:', appointments)
+
+      const filtered = appointments.filter(app => {
+        // console.log('Checking appointment:', app)
+        // console.log('Customer (Raw):', app.customer)
+
+        // Kiểm tra xem user.id có trong customer hay không
+        const customerIds = app.customer.flat() // Chuyển [["id"]] thành ["id"]
+        // console.log('Customer IDs (Flattened):', customerIds)
+
+        return customerIds.includes(userData.id)
+      })
+
+      // console.log('Filtered Appointments:', filtered)
+      setFilteredAppointments(filtered)
+    }
+  }, [userData, appointments])
+  //Service name
+  useEffect(() => {
+    const fetchServices = async () => {
+      const token = sessionStorage.getItem('token')
+      if (!token) {
+        console.error('No token found, please log in.')
+        return
+      }
+      try {
+        const response = await axios.get('http://localhost:3000/api/service', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        console.log('Dữ liệu dịch vụ:', response.data) // Log dữ liệu API
+        if (response.data && response.data.data) {
+          setServices(response.data.data)
+        }
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách dịch vụ:', error)
+      }
+    }
+
+    fetchServices()
+  }, [])
+  // const findServiceNameById = serviceId => {
+  //   console.log('Service ID:', serviceId) // Kiểm tra giá trị serviceId
+  //   const service = services.find(s => s.id === serviceId)
+  //   console.log('Service found:', service) // Kiểm tra nếu service được tìm thấy
+  //   return service ? service.name : 'Không xác định'
+  // }
+  const findServiceNameById = id => {
+    console.log('Danh services:', services)
+    const service = services.find(service => service.id === id) // services là danh sách dịch vụ
+    console.log('Service:', service)
+    return service ? service.name : 'Không tìm thấy dịch vụ'
+  }
+  // Status
+  const statusMap = {
+    0: 'PENDING',
+    1: 'ACCEPTED',
+    2: 'CANCELED',
+    3: 'FINISHED'
+  }
+  const statusColors = {
+    0: 'orange',
+    1: 'green',
+    2: 'red',
+    3: 'blue'
+  };
   return (
     <>
       {/* Snackbar thông báo */}
@@ -266,7 +388,6 @@ const Profile = () => {
               <Typography variant='body1' color='textSecondary' sx={{ mb: 3 }}>
                 {userData?.email || ''}
               </Typography>
-
               <Button
                 variant='contained'
                 startIcon={<EditIcon />}
@@ -279,30 +400,39 @@ const Profile = () => {
               >
                 {isEditing ? 'Hủy chỉnh sửa' : 'Chỉnh sửa thông tin'}
               </Button>
+              {/* Button mở Modal danh sách Appointment
+              <Button
+                variant='contained'
+                startIcon={<EventIcon />}
+                onClick={handleOpenModal}
+                sx={{
+                  backgroundColor: '#f8a488',
+                  '&:hover': { backgroundColor: '#f7926e' },
+                  textTransform: 'none',
+                  marginTop: '20px'
+                }}
+              >
+                Xem lịch hẹn
+              </Button> */}
             </Paper>
-
             <Card sx={{ mt: 3 }}>
-              {/* <CardContent>
-                <Typography variant="h6" sx={{ mb: 2 }}>Thông tin tài khoản</Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography color="textSecondary">ID</Typography>
-                    <Typography>{userData?.id || ''}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography color="textSecondary">Vai trò</Typography>
-                    <Typography>{userData?.role === 0 ? 'Khách hàng' : 'Admin'}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography color="textSecondary">Ngày tạo</Typography>
-                    <Typography>{userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString() : ''}</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography color="textSecondary">Cập nhật</Typography>
-                    <Typography>{userData?.updatedAt ? new Date(userData.updatedAt).toLocaleDateString() : ''}</Typography>
-                  </Grid>
-                </Grid>
-              </CardContent> */}
+              <CardContent>
+                <Typography variant='h6' sx={{ mb: 2 }}>
+                  Thông tin lịch hẹn
+                </Typography>
+                <Button
+                  variant='contained'
+                  startIcon={<EventIcon />}
+                  onClick={handleOpenModal}
+                  sx={{
+                    backgroundColor: '#f8a488',
+                    '&:hover': { backgroundColor: '#f7926e' },
+                    textTransform: 'none'
+                  }}
+                >
+                  Xem lịch hẹn
+                </Button>
+              </CardContent>
             </Card>
           </Grid>
 
@@ -402,6 +532,129 @@ const Profile = () => {
           </Grid>
         </Grid>
       </Container>
+      {/* Modal hiển thị danh sách cuộc hẹn */}
+      {/* <Modal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <Paper sx={{ p: 4, width: 400, maxHeight: 500, overflowY: 'auto' }}>
+          <Typography variant='h6' sx={{ mb: 2 }}>
+            Danh sách cuộc hẹn
+          </Typography>
+
+          {loadingAppointments ? (
+            <CircularProgress />
+          ) : appointments.length === 0 ? (
+            <Typography>Không có cuộc hẹn nào.</Typography>
+          ) : (
+            <List>
+              {appointments.map((appointment, index) => (
+                <ListItem key={index} divider>
+                  <ListItemText
+                    primary={`Dịch vụ: ${appointment.service}`}
+                    secondary={`Ngày: ${appointment.date}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          )}
+
+          <Button
+            onClick={() => setOpenModal(false)}
+            variant='contained'
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            Đóng
+          </Button>
+        </Paper>
+      </Modal> */}
+      {/* <Button
+        variant='contained'
+        color='primary'
+        onClick={() => setOpenModal(true)}
+      >
+        Xem cuộc hẹn của tôi
+      </Button> */}
+
+      <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+        <DialogTitle>Danh sách cuộc hẹn</DialogTitle>
+        <DialogContent>
+          {/* <List>
+            {filteredAppointments.length > 0 ? (
+              filteredAppointments.map(app => (
+                <ListItem key={app._id}>
+                  <ListItemText
+                    // primary={`Khách hàng: ${app.customerName}`}
+                    secondary={`Dịch vụ: ${getServiceName(app.services)} | Tổng: ${
+                      app.total
+                    } | Trạng thái: ${app.status}`}
+                  />
+                </ListItem>
+              ))
+            ) : (
+              <ListItem>
+                <ListItemText primary='Không có cuộc hẹn nào.' />
+              </ListItem>
+            )}
+          </List> */}
+          {/* <List>
+            {filteredAppointments.map((app, index) => (
+              <ListItem key={index}>
+                <ListItemText
+                  // primary={`Dịch vụ: ${findServiceNameById(app.service)}`}
+                  primary={`Dịch vụ: ${
+                    console.log("app.services:", app.services),
+                    app.services.map(
+                    id => findServiceNameById(id)).join(', ')}`}
+                  secondary={`Thời gian: ${new Date(
+                    app.date
+                  ).toLocaleString()}`}
+                />
+              </ListItem>
+            ))}
+          </List> */}
+          <List>
+            {filteredAppointments.map((app, index) => {
+              const serviceIds = app.services[0] // Lấy mảng ID: ['67d40c48b9bd59b6d080263e']
+              const serviceNames = serviceIds
+                .map(id => findServiceNameById(id))
+                .join(', ') // Lấy tên và nối bằng dấu phẩy
+              console.log('app.services:', app.services)
+              console.log('serviceId:', app.services[0][0])
+              console.log(
+                'serviceName:',
+                findServiceNameById(app.services[0][0])
+              )
+              return (
+                <ListItem key={index}>
+                  <ListItemText
+                    primary={`Dịch vụ: ${serviceNames}`}
+                    // secondary={`Thời gian: ${new Date(
+                    //   app.date
+                    // ).toLocaleString()}`}
+                    // secondary={`Thời gian: ${new Date(
+                    //   app.date
+                    // ).toLocaleString()} | Trạng thái: ${statusMap[app.status]}`}
+                    secondary={
+                      <>
+                        Thời gian: {new Date(app.date).toLocaleString()} | Trạng thái:{' '}
+                        <span style={{ color: statusColors[app.status] || 'black' }}>
+                          {statusMap[app.status] || 'UNKNOWN'}
+                        </span>
+                      </>
+                    }
+                  />
+                </ListItem>
+              )
+            })}
+          </List>
+          <Button onClick={() => setOpenModal(false)} color='primary'>
+            Đóng
+          </Button>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
