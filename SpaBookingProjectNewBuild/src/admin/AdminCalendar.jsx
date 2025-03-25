@@ -1,24 +1,19 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import {
   Box,
   Paper,
   Typography,
   Grid,
-  Button,
   IconButton,
-  Tooltip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   CircularProgress,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
-  Add as AddIcon,
 } from "@mui/icons-material";
 import axios from "axios";
 
@@ -28,65 +23,49 @@ export default function AdminCalendar() {
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [shiftAssignments, setShiftAssignments] = useState({});
 
   useEffect(() => {
-    const fetchAppointments = async () => {
+    const fetchAppointmentsAndStaff = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const response = await axios.get(
-          "http://localhost:3000/api/appointments",
-          {
+
+        const [appointmentsResponse, staffResponse] = await Promise.all([
+          axios.get("http://localhost:3000/api/appointments", {
             headers: { Authorization: `Bearer ${token}` },
-          }
+          }),
+          axios.get("http://localhost:3000/api/account?role=1", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        console.log("Staff API Response:", staffResponse.data);
+
+        const formattedAppointments = appointmentsResponse.data.map(
+          (appointment) => ({
+            id: appointment._id,
+            date: new Date(appointment.date).toISOString().split("T")[0],
+            time: appointment.time,
+            status: appointment.status,
+            customer: appointment.customer[0]?.$oid || "Unknown",
+            services: appointment.services
+              .map((service) => service[0]?.$oid || "Unknown")
+              .join(", "),
+          })
         );
-        setAppointments(response.data);
+
+        setAppointments(formattedAppointments);
+        setStaff(Array.isArray(staffResponse.data) ? staffResponse.data : []);
       } catch (error) {
-        setError("Error fetching bookings.");
-        console.error("Error fetching bookings:", error);
+        setError("Error fetching data.");
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    const fetchStaff = async () => {
-      try {
-        const token = sessionStorage.getItem("token");
-        const response = await axios.get(
-          "http://localhost:3000/api/account?role=1",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setStaff(response.data);
-      } catch (error) {
-        setError("Error fetching staff.");
-        console.error("Error fetching staff:", error);
-      }
-    };
-
-    fetchAppointments();
-    fetchStaff();
+    fetchAppointmentsAndStaff();
   }, []);
-
-  const assignRandomStaff = () => {
-    if (staff.length === 0) return null;
-    const randomStaff = staff[Math.floor(Math.random() * staff.length)];
-    return randomStaff;
-  };
-
-  const updateStaffStatus = (staffId) => {
-    const newStatus = Math.random() > 0.5 ? "active" : "inactive";
-    axios
-      .patch(`http://localhost:3000/api/account/${staffId}`, {
-        status: newStatus,
-      })
-      .then(() =>
-        console.log(`Staff ${staffId} status updated to ${newStatus}`)
-      )
-      .catch((err) => console.error("Failed to update staff status", err));
-  };
 
   const handlePrevMonth = () => {
     setCurrentDate(
@@ -100,13 +79,11 @@ export default function AdminCalendar() {
     );
   };
 
-  const handleDateClick = (date) => {
-    setSelectedDate(date);
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
+  const assignStaffToShift = (date, time, staffId) => {
+    setShiftAssignments((prevAssignments) => ({
+      ...prevAssignments,
+      [`${date}-${time}`]: staffId,
+    }));
   };
 
   const generateCalendarDays = () => {
@@ -132,7 +109,6 @@ export default function AdminCalendar() {
   if (error) return <Typography color="error">{error}</Typography>;
 
   const calendarDays = generateCalendarDays();
-  const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const monthYearString = currentDate.toLocaleString("default", {
     month: "long",
     year: "numeric",
@@ -157,6 +133,62 @@ export default function AdminCalendar() {
             <ChevronRightIcon />
           </IconButton>
         </Box>
+        <Grid container spacing={1}>
+          {calendarDays.map((day, index) => (
+            <Grid
+              item
+              key={index}
+              xs={1.7}
+              sx={{ border: "1px solid #ddd", p: 1, minHeight: 100 }}
+            >
+              {day && (
+                <>
+                  <Typography variant="body2">{day.day}</Typography>
+                  {day.events.map((event) => (
+                    <Paper
+                      key={event.id}
+                      sx={{ p: 1, mt: 1, backgroundColor: "#f5f5f5" }}
+                    >
+                      <Typography variant="caption">{event.time}</Typography>
+                      <Typography variant="body2">
+                        Customer: {event.customer}
+                      </Typography>
+                      <Typography variant="body2">
+                        Services: {event.services}
+                      </Typography>
+                      <FormControl fullWidth size="small" sx={{ mt: 1 }}>
+                        <InputLabel>Assign Staff</InputLabel>
+                        <Select
+                          value={
+                            shiftAssignments[`${event.date}-${event.time}`] ||
+                            ""
+                          }
+                          onChange={(e) =>
+                            assignStaffToShift(
+                              event.date,
+                              event.time,
+                              e.target.value
+                            )
+                          }
+                        >
+                          {staff.length > 0 ? (
+                            staff.map((member) => (
+                              <MenuItem key={member._id} value={member._id}>
+                                {member.fName}
+                              </MenuItem>
+                            ))
+                          ) : (
+                            <MenuItem disabled>No staff available</MenuItem>
+                          )}
+                        </Select>
+                      </FormControl>
+                    </Paper>
+                  ))}
+                </>
+              )}
+            </Grid>
+          ))}
+        </Grid>
       </Paper>
     </Box>
   );

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import {
   Box,
@@ -10,16 +8,9 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Chip,
   CircularProgress,
   Typography,
 } from "@mui/material";
-import {
-  AccessTime as AccessTimeIcon,
-  CheckCircle as CheckCircleIcon,
-  Cancel as CancelIcon,
-  DoneAll as DoneAllIcon,
-} from "@mui/icons-material";
 import axios from "axios";
 
 const AppointmentStatusEnum = {
@@ -27,11 +18,6 @@ const AppointmentStatusEnum = {
   1: "Accepted",
   2: "Canceled",
   3: "Finished",
-};
-
-const PaymentMethodEnum = {
-  0: "Cash",
-  1: "Credit Card",
 };
 
 const PaymentStatusEnum = {
@@ -42,7 +28,6 @@ const PaymentStatusEnum = {
 
 export default function BookingsList({ limit, filterToday }) {
   const [bookings, setBookings] = useState([]);
-  const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -50,7 +35,7 @@ export default function BookingsList({ limit, filterToday }) {
     const fetchBookings = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const [bookingsResponse, paymentsResponse] = await Promise.all([
+        const [appointmentsResponse, paymentsResponse] = await Promise.all([
           axios.get("http://localhost:3000/api/appointments", {
             headers: { Authorization: `Bearer ${token}` },
           }),
@@ -59,20 +44,82 @@ export default function BookingsList({ limit, filterToday }) {
           }),
         ]);
 
-        const paymentMap = paymentsResponse.data.reduce((acc, payment) => {
-          acc[payment._id.$oid] = payment;
+        const bookingsData = appointmentsResponse.data;
+        const paymentsData = paymentsResponse.data;
+        console.log("Raw Bookings Data:", bookingsData);
+        console.log("Raw Payments Data:", paymentsData);
+
+        const paymentMap = paymentsData.reduce((acc, payment) => {
+          acc[payment.orderCode] =
+            PaymentStatusEnum[payment.status] || "Unknown";
           return acc;
         }, {});
 
-        const enrichedBookings = bookingsResponse.data.map((booking) => ({
-          ...booking,
-          payment: paymentMap[booking._id.$oid] || null,
+        // Extract unique customer and service IDs
+        const customerIds = [
+          ...new Set(bookingsData.map((appt) => appt.customer[0]?.$oid)),
+        ];
+        const serviceIds = [
+          ...new Set(
+            bookingsData.flatMap((appt) =>
+              appt.services.map((service) => service[0]?.$oid)
+            )
+          ),
+        ];
+
+        console.log("Extracted Customer IDs:", customerIds);
+        console.log("Extracted Service IDs:", serviceIds);
+
+        const [customersResponse, servicesResponse] = await Promise.all([
+          axios.get("http://localhost:3000/api/account", {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { ids: customerIds.join(",") },
+          }),
+          axios.get("http://localhost:3000/api/service", {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { ids: serviceIds.join(",") },
+          }),
+        ]);
+
+        console.log("Customers Response:", customersResponse.data);
+        console.log("Services Response:", servicesResponse.data);
+
+        const customers = Array.isArray(customersResponse.data)
+          ? customersResponse.data
+          : [];
+        const services = Array.isArray(servicesResponse.data)
+          ? servicesResponse.data
+          : [];
+
+        const customerMap = customers.reduce((acc, cust) => {
+          acc[cust._id] = cust.fName;
+          return acc;
+        }, {});
+
+        const serviceMap = services.reduce((acc, service) => {
+          acc[service._id] = service.name;
+          return acc;
+        }, {});
+
+        console.log("Updated Customer Map:", customerMap);
+        console.log("Updated Service Map:", serviceMap);
+
+        const formattedBookings = bookingsData.map((booking) => ({
+          id: booking._id,
+          date: new Date(booking.date).toISOString().split("T")[0],
+          time: booking.time,
+          status: AppointmentStatusEnum[booking.status] || "Unknown",
+          paymentStatus: paymentMap[booking._id] || "Unknown",
+          customer: customerMap[booking.customer[0]?.$oid] || "Unknown",
+          services: booking.services
+            .map((service) => serviceMap[service[0]?.$oid] || "Unknown")
+            .join(", "),
         }));
 
-        setBookings(enrichedBookings);
+        setBookings(formattedBookings);
       } catch (error) {
-        setError("Error fetching bookings or payments.");
-        console.error("Error:", error);
+        setError("Error fetching bookings.");
+        console.error("Error fetching bookings:", error);
       } finally {
         setLoading(false);
       }
@@ -82,43 +129,41 @@ export default function BookingsList({ limit, filterToday }) {
   }, []);
 
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Customer</TableCell>
-            <TableCell>Services</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Time</TableCell>
-            <TableCell>Payment Status</TableCell>
-            <TableCell>Amount</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {bookings.map((booking) => (
-            <TableRow key={booking._id.$oid}>
-              <TableCell>{booking._id.$oid}</TableCell>
-              <TableCell>
-                {booking.customer.map((cust) => cust[0].$oid).join(", ")}
-              </TableCell>
-              <TableCell>
-                {booking.services.map((service) => service[0].$oid).join(", ")}
-              </TableCell>
-              <TableCell>{AppointmentStatusEnum[booking.status]}</TableCell>
-              <TableCell>
-                {new Date(booking.date).toLocaleDateString()}
-              </TableCell>
-              <TableCell>{booking.time}</TableCell>
-              <TableCell>
-                {PaymentStatusEnum[booking.payment?.status]}
-              </TableCell>
-              <TableCell>{booking.payment?.amount || "N/A"}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box>
+      {loading ? (
+        <CircularProgress />
+      ) : error ? (
+        <Typography color="error">{error}</Typography>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Customer</TableCell>
+                <TableCell>Services</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Payment Status</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Time</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {bookings.map((booking) => (
+                <TableRow key={booking.id}>
+                  <TableCell>{booking.id}</TableCell>
+                  <TableCell>{booking.customer}</TableCell>
+                  <TableCell>{booking.services}</TableCell>
+                  <TableCell>{booking.status}</TableCell>
+                  <TableCell>{booking.paymentStatus}</TableCell>
+                  <TableCell>{booking.date}</TableCell>
+                  <TableCell>{booking.time}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </Box>
   );
 }
