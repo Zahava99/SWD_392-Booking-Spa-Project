@@ -139,6 +139,7 @@ const HomePage = () => {
               component='h1'
               gutterBottom
               fontWeight='bold'
+              sx={{ color: 'white' }}
             >
               Relax & Rejuvenate
             </Typography>
@@ -413,7 +414,7 @@ const HomePage = () => {
       {/* Call to Action */}
       <Box py={10} bgcolor='#4caf50' color='white' textAlign='center'>
         <Container>
-          <Typography variant='h3' component='h2' gutterBottom>
+          <Typography variant='h3' component='h2' gutterBottom sx={{ color: 'white' }}>
             Ready to Experience Luxury?
           </Typography>
           <Typography variant='h6' paragraph>
