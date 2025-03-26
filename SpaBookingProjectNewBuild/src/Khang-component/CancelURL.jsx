@@ -27,7 +27,7 @@ const CancelPayment = () => {
           onClick={() => navigate("/")}
           sx={{ marginTop: "20px" }}
         >
-          Quay lại trang đặt lịch
+          Quay lại trang chủ
         </Button>
       </Box>
     </Container>

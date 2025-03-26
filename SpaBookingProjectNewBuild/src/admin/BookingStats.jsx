@@ -33,7 +33,29 @@ export default function BookingStats() {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setStats(response.data);
+        console.log("API Response:", response.data.length);
+        const appointments = response.data;
+        console.log("Appointments:", appointments);
+        
+        const statsData = {
+          totalBookings: appointments.length,
+          acceptedBookings: appointments.filter(
+            (appt) => appt.status === 1
+          ).length,
+          pendingBookings: appointments.filter(
+            (appt) => appt.status === 0
+          ).length,
+          canceledBookings: appointments.filter(
+            (appt) => appt.status === 2
+          ).length,
+          finishingBookings: appointments.filter(
+            (appt) => appt.status === 3
+          ).length,
+        };
+        console.log("Stats Data:", statsData);
+        
+        // setStats(response.data);
+        setStats(statsData);
       } catch (error) {
         setError("Failed to load statistics.");
         console.error("Error fetching stats:", error);
@@ -71,6 +93,11 @@ export default function BookingStats() {
       <Grid item xs={12} sm={6} md={3}>
         <Paper>
           <Typography>Canceled: {stats.canceledBookings}</Typography>
+        </Paper>
+      </Grid>
+      <Grid item xs={12} sm={6} md={3}>
+        <Paper>
+          <Typography>Finished: {stats.finishingBookings}</Typography>
         </Paper>
       </Grid>
     </Grid>
