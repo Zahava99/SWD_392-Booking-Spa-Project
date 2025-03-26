@@ -213,6 +213,7 @@ const Profile = () => {
       }
     };
 
+
     fetchServices();
   }, []);
 
@@ -374,20 +375,35 @@ const Profile = () => {
               >
                 {isEditing ? "Hủy chỉnh sửa" : "Chỉnh sửa thông tin"}
               </Button>
+              {/* Button mở Modal danh sách Appointment
+              <Button
+                variant='contained'
+                startIcon={<EventIcon />}
+                onClick={
+                }
+                sx={{
+                  backgroundColor: '#f8a488',
+                  '&:hover': { backgroundColor: '#f7926e' },
+                  textTransform: 'none',
+                  marginTop: '20px'
+                }}
+              >
+                Xem lịch hẹn
+              </Button> */}
             </Paper>
             <Card sx={{ mt: 3 }}>
               <CardContent>
-                <Typography variant="h6" sx={{ mb: 2 }}>
+                <Typography variant='h6' sx={{ mb: 2 }}>
                   Thông tin lịch hẹn
                 </Typography>
                 <Button
-                  variant="contained"
+                  variant='contained'
                   startIcon={<EventIcon />}
                   onClick={handleOpenModal}
                   sx={{
-                    backgroundColor: "#f8a488",
-                    "&:hover": { backgroundColor: "#f7926e" },
-                    textTransform: "none",
+                    backgroundColor: '#f8a488',
+                    '&:hover': { backgroundColor: '#f7926e' },
+                    textTransform: 'none'
                   }}
                 >
                   Xem lịch hẹn
@@ -492,6 +508,51 @@ const Profile = () => {
           </Grid>
         </Grid>
       </Container>
+      {/* Modal hiển thị danh sách cuộc hẹn */}
+      {/* <Modal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <Paper sx={{ p: 4, width: 400, maxHeight: 500, overflowY: 'auto' }}>
+          <Typography variant='h6' sx={{ mb: 2 }}>
+            Danh sách cuộc hẹn
+          </Typography>
+
+          {loadingAppointments ? (
+            <CircularProgress />
+          ) : appointments.length === 0 ? (
+            <Typography>Không có cuộc hẹn nào.</Typography>
+          ) : (
+            <List>
+              {appointments.map((appointment, index) => (
+                <ListItem key={index} divider>
+                  <ListItemText
+                    primary={`Dịch vụ: ${appointment.service}`}
+                    secondary={`Ngày: ${appointment.date}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          )}
+
+          <Button
+            onClick={() => setOpenModal(false)}
+            variant='contained'
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            Đóng
+          </Button>
+        </Paper>
+      </Modal> */}
+      {/* <Button
+        variant='contained'
+        color='primary'
+        onClick={() => setOpenModal(true)}
+      >
+        Xem cuộc hẹn của tôi
+      </Button> */}
 
       <Dialog open={openModal} onClose={() => setOpenModal(false)}>
         <DialogTitle>Danh sách cuộc hẹn</DialogTitle>
@@ -508,6 +569,52 @@ const Profile = () => {
                 "serviceName:",
                 findServiceNameById(app.services[0][0])
               );
+          {/* <List>
+            {filteredAppointments.length > 0 ? (
+              filteredAppointments.map(app => (
+                <ListItem key={app._id}>
+                  <ListItemText
+                    // primary={`Khách hàng: ${app.customerName}`}
+                    secondary={`Dịch vụ: ${getServiceName(app.services)} | Tổng: ${
+                      app.total
+                    } | Trạng thái: ${app.status}`}
+                  />
+                </ListItem>
+              ))
+            ) : (
+              <ListItem>
+                <ListItemText primary='Không có cuộc hẹn nào.' />
+              </ListItem>
+            )}
+          </List> */}
+          {/* <List>
+            {filteredAppointments.map((app, index) => (
+              <ListItem key={index}>
+                <ListItemText
+                  // primary={`Dịch vụ: ${findServiceNameById(app.service)}`}
+                  primary={`Dịch vụ: ${
+                    console.log("app.services:", app.services),
+                    app.services.map(
+                    id => findServiceNameById(id)).join(', ')}`}
+                  secondary={`Thời gian: ${new Date(
+                    app.date
+                  ).toLocaleString()}`}
+                />
+              </ListItem>
+            ))}
+          </List> */}
+          <List>
+            {filteredAppointments.map((app, index) => {
+              const serviceIds = app.services[0] // Lấy mảng ID: ['67d40c48b9bd59b6d080263e']
+              const serviceNames = serviceIds
+                .map(id => findServiceNameById(id))
+                .join(', ') // Lấy tên và nối bằng dấu phẩy
+              console.log('app.services:', app.services)
+              console.log('serviceId:', app.services[0][0])
+              console.log(
+                'serviceName:',
+                findServiceNameById(app.services[0][0])
+              )
               return (
                 <ListItem key={index}>
                   <ListItemText
