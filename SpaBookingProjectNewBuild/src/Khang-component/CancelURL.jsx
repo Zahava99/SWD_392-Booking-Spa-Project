@@ -24,10 +24,10 @@ const CancelPayment = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => navigate("/payment")}
+          onClick={() => navigate("/appointment")}
           sx={{ marginTop: "20px" }}
         >
-          Quay lại thanh toán
+          Quay lại trang đặt lịch
         </Button>
       </Box>
     </Container>
