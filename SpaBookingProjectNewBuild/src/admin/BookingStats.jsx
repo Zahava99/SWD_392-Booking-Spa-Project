@@ -28,7 +28,7 @@ export default function BookingStats() {
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(
-          "http://localhost:3000/api/appointments",
+          "http://160.30.137.106:3000/api/appointments",
           {
             headers: { Authorization: `Bearer ${token}` },
           }

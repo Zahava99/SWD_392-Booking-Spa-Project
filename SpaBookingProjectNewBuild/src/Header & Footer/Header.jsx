@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -7,26 +7,26 @@ import {
   Menu,
   MenuItem,
   InputBase,
-  IconButton
-} from '@mui/material'
-import { Link,useNavigate } from 'react-router-dom'
-import SearchIcon from '@mui/icons-material/Search'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import logo from '../assets/logo-image/logo.jpg'
-import axios from 'axios'
+  IconButton,
+} from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import SearchIcon from "@mui/icons-material/Search";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import logo from "../assets/logo-image/logo.jpg";
+import axios from "axios";
 
 const Header = () => {
-  const [serviceAnchorEl, setServiceAnchorEl] = useState(null)
+  const [serviceAnchorEl, setServiceAnchorEl] = useState(null);
   //
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // State theo dõi trạng thái đăng nhập
-  const [userName, setUserName] = useState('') // State lưu tên người dùng
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State theo dõi trạng thái đăng nhập
+  const [userName, setUserName] = useState(""); // State lưu tên người dùng
   //
   const navigate = useNavigate();
   //
   // useEffect(() => {
   //   const token = sessionStorage.getItem('token')
   //   if (token) {
-  //     axios.get('http://localhost:3000/api/auth/profile', {
+  //     axios.get('http://160.30.137.106:3000/api/auth/profile', {
   //       headers: { Authorization: `Bearer ${token}` }
   //     })
   //       .then(response => {
@@ -42,83 +42,83 @@ const Header = () => {
   // }, [])
   useEffect(() => {
     const updateAuthState = () => {
-      const token = sessionStorage.getItem('token');
+      const token = sessionStorage.getItem("token");
       if (token) {
         axios
-          .get('http://localhost:3000/api/auth/profile', {
+          .get("http://160.30.137.106:3000/api/auth/profile", {
             headers: { Authorization: `Bearer ${token}` },
           })
-          .then(response => {
+          .then((response) => {
             setIsLoggedIn(true);
-            setUserName(response.data.data.fName || 'Người dùng');
+            setUserName(response.data.data.fName || "Người dùng");
           })
           .catch(() => {
             setIsLoggedIn(false);
-            setUserName('');
+            setUserName("");
           });
       } else {
         setIsLoggedIn(false);
-        setUserName('');
+        setUserName("");
       }
     };
-  
+
     updateAuthState();
-    window.addEventListener('authChange', updateAuthState);
-  
+    window.addEventListener("authChange", updateAuthState);
+
     return () => {
-      window.removeEventListener('authChange', updateAuthState);
+      window.removeEventListener("authChange", updateAuthState);
     };
   }, []);
   const handleClick = (event, setAnchorEl) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
-  const handleClose = setAnchorEl => {
-    setAnchorEl(null)
-  }
+  const handleClose = (setAnchorEl) => {
+    setAnchorEl(null);
+  };
 
   //
   const handleLogout = () => {
     // Logic đăng xuất: xóa token, reset state
-    sessionStorage.removeItem('token');
+    sessionStorage.removeItem("token");
     setIsLoggedIn(false);
-    setUserName('');
-    navigate('/login');
+    setUserName("");
+    navigate("/login");
     window.location.reload();
-  }
+  };
   //
   return (
     <AppBar
-      position='static'
-      color='default'
-      sx={{ boxShadow: 1, backgroundColor: 'white' }}
+      position="static"
+      color="default"
+      sx={{ boxShadow: 1, backgroundColor: "white" }}
     >
       <Toolbar>
-        <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-          <Link to='/'>
+        <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
+          <Link to="/">
             <img
               src={logo}
-              alt='logo'
-              style={{ width: '50px', height: '50px', marginRight: '10px' }}
+              alt="logo"
+              style={{ width: "50px", height: "50px", marginRight: "10px" }}
             />
           </Link>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Button
-            color='inherit'
+            color="inherit"
             component={Link}
-            to='/'
-            sx={{ color: '#000', textTransform: 'none', fontWeight: 'medium' }}
+            to="/"
+            sx={{ color: "#000", textTransform: "none", fontWeight: "medium" }}
           >
             Trang chủ
           </Button>
 
           <Button
-            color='inherit'
+            color="inherit"
             endIcon={<KeyboardArrowDownIcon />}
-            onClick={e => handleClick(e, setServiceAnchorEl)}
-            sx={{ color: '#000', textTransform: 'none', fontWeight: 'medium' }}
+            onClick={(e) => handleClick(e, setServiceAnchorEl)}
+            sx={{ color: "#000", textTransform: "none", fontWeight: "medium" }}
           >
             Danh mục Spa
           </Button>
@@ -129,28 +129,28 @@ const Header = () => {
           >
             <MenuItem
               component={Link}
-              to='/massage'
+              to="/massage"
               onClick={() => handleClose(setServiceAnchorEl)}
             >
               Massage
             </MenuItem>
             <MenuItem
               component={Link}
-              to='/facial'
+              to="/facial"
               onClick={() => handleClose(setServiceAnchorEl)}
             >
               Facial
             </MenuItem>
             <MenuItem
               component={Link}
-              to='/body-treatment'
+              to="/body-treatment"
               onClick={() => handleClose(setServiceAnchorEl)}
             >
               Body Treatment
             </MenuItem>
             <MenuItem
               component={Link}
-              to='/aromatherapy'
+              to="/aromatherapy"
               onClick={() => handleClose(setServiceAnchorEl)}
             >
               Aromatherapy
@@ -158,52 +158,52 @@ const Header = () => {
           </Menu>
 
           <Button
-            color='inherit'
+            color="inherit"
             component={Link}
-            to='/blog'
-            sx={{ color: '#000', textTransform: 'none', fontWeight: 'medium' }}
+            to="/blog"
+            sx={{ color: "#000", textTransform: "none", fontWeight: "medium" }}
           >
             Blog
           </Button>
 
           <Button
-            color='inherit'
+            color="inherit"
             component={Link}
-            to='/about'
-            sx={{ color: '#000', textTransform: 'none', fontWeight: 'medium' }}
+            to="/about"
+            sx={{ color: "#000", textTransform: "none", fontWeight: "medium" }}
           >
             Về chúng tôi
           </Button>
 
           <Button
-            color='inherit'
+            color="inherit"
             component={Link}
-            to='/contact'
-            sx={{ color: '#000', textTransform: 'none', fontWeight: 'medium' }}
+            to="/contact"
+            sx={{ color: "#000", textTransform: "none", fontWeight: "medium" }}
           >
             Liên hệ
           </Button>
           {isLoggedIn ? (
             <Button
-              color='inherit'
+              color="inherit"
               onClick={handleLogout}
               sx={{
-                color: '#000',
-                textTransform: 'none',
-                fontWeight: 'medium'
+                color: "#000",
+                textTransform: "none",
+                fontWeight: "medium",
               }}
             >
               Đăng xuất
             </Button>
           ) : (
             <Button
-              color='inherit'
+              color="inherit"
               component={Link}
-              to='/login'
+              to="/login"
               sx={{
-                color: '#000',
-                textTransform: 'none',
-                fontWeight: 'medium'
+                color: "#000",
+                textTransform: "none",
+                fontWeight: "medium",
               }}
             >
               Đăng nhập
@@ -254,14 +254,24 @@ const Header = () => {
             </IconButton>
           </Box>
         )} */}
-                {isLoggedIn && (
-          <Button color='inherit' component={Link} to='/profile' sx={{ ml: 2, color: '#000', textTransform: 'none', fontWeight: 'medium' }}>
-            {userName || 'Người dùng'}
+        {isLoggedIn && (
+          <Button
+            color="inherit"
+            component={Link}
+            to="/profile"
+            sx={{
+              ml: 2,
+              color: "#000",
+              textTransform: "none",
+              fontWeight: "medium",
+            }}
+          >
+            {userName || "Người dùng"}
           </Button>
         )}
       </Toolbar>
     </AppBar>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

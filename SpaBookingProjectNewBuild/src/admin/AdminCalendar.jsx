@@ -31,10 +31,10 @@ export default function AdminCalendar () {
         const token = sessionStorage.getItem('token')
 
         const [appointmentsResponse, staffResponse] = await Promise.all([
-          axios.get('http://localhost:3000/api/appointments', {
+          axios.get('http://160.30.137.106:3000/api/appointments', {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get('http://localhost:3000/api/account?role=1', {
+          axios.get('http://160.30.137.106:3000/api/account?role=1', {
             headers: { Authorization: `Bearer ${token}` }
           })
         ])
@@ -58,11 +58,11 @@ export default function AdminCalendar () {
         ]
 
         const [customersResponse, servicesResponse] = await Promise.all([
-          axios.get('http://localhost:3000/api/account', {
+          axios.get('http://160.30.137.106:3000/api/account', {
             headers: { Authorization: `Bearer ${token}` },
             params: { ids: customerIds.join(',') }
           }),
-          axios.get('http://localhost:3000/api/service', {
+          axios.get('http://160.30.137.106:3000/api/service', {
             headers: { Authorization: `Bearer ${token}` },
             params: { ids: serviceIds.join(',') }
           })
