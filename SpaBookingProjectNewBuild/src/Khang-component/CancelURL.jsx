@@ -24,7 +24,7 @@ const CancelPayment = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => navigate("/appointment")}
+          onClick={() => navigate("/")}
           sx={{ marginTop: "20px" }}
         >
           Quay lại trang đặt lịch

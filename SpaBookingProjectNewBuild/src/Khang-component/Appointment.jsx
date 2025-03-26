@@ -227,7 +227,7 @@ const Appointment = () => {
             mb: 2
           }}
         >
-          Appointment
+          Đặt lịch hẹn
         </Typography>
         <Breadcrumbs
           aria-label='breadcrumb'
@@ -253,7 +253,7 @@ const Appointment = () => {
             <HomeIcon sx={{ mr: 0.5 }} fontSize='inherit' />
             Home
           </MuiLink>
-          <Typography color='white'>Appointment</Typography>
+          <Typography color='white'>Đặt lịch hẹn</Typography>
         </Breadcrumbs>
       </Box>
 
@@ -270,7 +270,7 @@ const Appointment = () => {
                 color: '#333'
               }}
             >
-              Treatment Inquiry
+              Yêu cầu đặt lịch
             </Typography>
             <Box component='form' onSubmit={handleSubmit} noValidate>
               <Grid2 container spacing={3}>
@@ -279,7 +279,7 @@ const Appointment = () => {
                     required
                     fullWidth
                     id='fullName'
-                    label='Full Name'
+                    label='Họ & Tên'
                     name='fullName'
                     value={formData.fullName}
                     onChange={handleChange}
@@ -291,7 +291,7 @@ const Appointment = () => {
                     required
                     fullWidth
                     id='email'
-                    label='Your Email'
+                    label='Email'
                     name='email'
                     type='email'
                     value={formData.email}
@@ -304,7 +304,7 @@ const Appointment = () => {
                     required
                     fullWidth
                     id='phone'
-                    label='Phone Number'
+                    label='Số điện thoại'
                     name='phone'
                     value={formData.phone}
                     onChange={handleChange}
@@ -314,7 +314,7 @@ const Appointment = () => {
                 <Grid2 item size={{ xs: 3, md: 2}}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                      label='Date'
+                      label='Chọn ngày'
                       value={selectedDate}
                       onChange={handleDateChange}
                       // defaultValue={tomorrow}
@@ -335,7 +335,7 @@ const Appointment = () => {
                 <Grid2 item size={{ xs: 3, md: 2 }} sx={{ paddingLeft: '0px'}}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
-                      label='Select Time'
+                      label='Chọn thời gian'
                       value={selectedTime}
                       onChange={handleTimeChange}
                       // Giới hạn giờ từ 8:00 đến 20:00
@@ -353,8 +353,8 @@ const Appointment = () => {
                   </LocalizationProvider>
                 </Grid2>
                 <Grid2>
-                  <Typography>
-                    <span style={{ color: 'red' }}>*</span> Chon tu 8h den 20h
+                  <Typography sx={{ top: '10px', position: 'relative' }}>
+                    <span style={{ color: 'red' }}>*</span> Thời gian: 8h – 20h
                   </Typography>
                 </Grid2>
                 <Grid2 item size={{ xs: 12, md: 12 }}>
@@ -379,7 +379,7 @@ const Appointment = () => {
                     select
                     fullWidth
                     id='subject'
-                    label='Select Subject'
+                    label='Chọn danh mục dịch vụ'
                     name='subject'
                     value={formData.subject}
                     onChange={handleChange}
@@ -393,7 +393,7 @@ const Appointment = () => {
                         </MenuItem>
                       ))
                     ) : (
-                      <MenuItem disabled>No subjects available</MenuItem>
+                      <MenuItem disabled>Không có danh mục</MenuItem>
                     )}
                   </TextField>
                 </Grid2>
@@ -404,7 +404,7 @@ const Appointment = () => {
                     select
                     fullWidth
                     id='service'
-                    label='Select Service'
+                    label='Chọn dịch vụ'
                     name='service'
                     value={formData.service}
                     onChange={handleChange}
@@ -419,7 +419,7 @@ const Appointment = () => {
                         </MenuItem>
                       ))
                     ) : (
-                      <MenuItem disabled>No services available</MenuItem>
+                      <MenuItem disabled>Không có dịch vụ</MenuItem>
                     )}
                   </TextField>
                   {/* <TextField
@@ -489,7 +489,7 @@ const Appointment = () => {
                       fontSize: '1rem'
                     }}
                   >
-                    Make Appointment
+                    Đặt lịch
                   </Button>
                 </Grid2>
               </Grid2>
