@@ -46,8 +46,8 @@ export default function BookingsList ({ limit, filterToday }) {
 
         const bookingsData = appointmentsResponse.data
         const paymentsData = paymentsResponse.data
-        console.log('Raw Bookings Data:', bookingsData) //co du lieu
-        console.log('Raw Payments Data:', paymentsData) //co du lieu
+        // console.log('Raw Bookings Data:', bookingsData) //co du lieu
+        // console.log('Raw Payments Data:', paymentsData) //co du lieu
 
         // const paymentMap = paymentsData.reduce((acc, payment) => {
         //   acc[payment.orderCode] =
@@ -61,7 +61,7 @@ export default function BookingsList ({ limit, filterToday }) {
           return acc;
         }, {});
 
-        console.log('Payment Map:', paymentMap)
+        // console.log('Payment Map:', paymentMap)
         // Extract unique customer and service IDs
 
         // const customerIds = [
@@ -89,8 +89,8 @@ export default function BookingsList ({ limit, filterToday }) {
         //   ),
         // ];
 
-        console.log('Extracted Customer IDs:', customerIds)
-        console.log('Extracted Service IDs:', serviceIds)
+        // console.log('Extracted Customer IDs:', customerIds)
+        // console.log('Extracted Service IDs:', serviceIds)
 
         const [customersResponse, servicesResponse] = await Promise.all([
           axios.get('http://localhost:3000/api/account', {
@@ -103,8 +103,8 @@ export default function BookingsList ({ limit, filterToday }) {
           })
         ])
 
-        console.log('Customers Response:', customersResponse.data)
-        console.log('Services Response:', servicesResponse.data)
+        // console.log('Customers Response:', customersResponse.data)
+        // console.log('Services Response:', servicesResponse.data)
 
         // const customers = Array.isArray(customersResponse.data)
         //   ? customersResponse.data
@@ -133,17 +133,17 @@ export default function BookingsList ({ limit, filterToday }) {
         }, {})
 
 //
-        bookingsData.forEach((booking) => {
-          console.log(`Checking payment for booking ID: ${booking._id}, Found: ${paymentMap[booking._id] || "Not Found"}`);
-        });
-        console.log("Payments Data:", paymentsData.map(p => ({
-          paymentID: p._id,
-          appointmentID: p.appointment._id,
-          status: p.status
-        })));
+        // bookingsData.forEach((booking) => {
+        //   console.log(`Checking payment for booking ID: ${booking._id}, Found: ${paymentMap[booking._id] || "Not Found"}`);
+        // });
+        // console.log("Payments Data:", paymentsData.map(p => ({
+        //   paymentID: p._id,
+        //   appointmentID: p.appointment._id,
+        //   status: p.status
+        // })));
 //
-        console.log('Updated Customer Map:', customerMap)
-        console.log('Updated Service Map:', serviceMap)
+        // console.log('Updated Customer Map:', customerMap)
+        // console.log('Updated Service Map:', serviceMap)
 
         // const formattedBookings = bookingsData.map(booking => ({
         //   id: booking._id,
@@ -183,11 +183,11 @@ export default function BookingsList ({ limit, filterToday }) {
           // services: booking.services.flat().join(", ")  // Làm phẳng và join
           services: booking.services.flat().map(id => serviceInfoMap[id] || "Unknown").join(", "),
         }));
-        console.log('Formatted Bookings:', formattedBookings)
+        // console.log('Formatted Bookings:', formattedBookings)
         setBookings(formattedBookings)
       } catch (error) {
         setError('Error fetching bookings.')
-        console.error('Error fetching bookings:', error)
+        // console.error('Error fetching bookings:', error)
       } finally {
         setLoading(false)
       }
