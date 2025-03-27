@@ -6,13 +6,14 @@ import {
   Box,
   TextField,
   Button,
-  Grid2,
+  // Grid,
   MenuItem,
   //   Paper,
   Breadcrumbs,
   Link as MuiLink,
   //   IconButton
 } from "@mui/material";
+import Grid from '@mui/material/Grid';
 import { Link } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -23,8 +24,8 @@ import {
 } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import axios from "axios";
-const tomorrow = dayjs().add(1, "day");
-const currentDate = dayjs().add(0, "day");
+// const tomorrow = dayjs().add(1, "day");
+// const currentDate = dayjs().add(0, "day");
 const Appointment = () => {
   //Test
   const [subjects, setSubjects] = useState([]);
@@ -259,8 +260,8 @@ const Appointment = () => {
 
       {/* Appointment Form Section */}
       <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Grid2 container spacing={4}>
-          <Grid2 item xs={12} md={6}>
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6}>
             <Typography
               variant="h3"
               component="h2"
@@ -273,8 +274,8 @@ const Appointment = () => {
               Yêu cầu đặt lịch
             </Typography>
             <Box component="form" onSubmit={handleSubmit} noValidate>
-              <Grid2 container spacing={3}>
-                <Grid2 item size={{ xs: 6, md: 6 }}>
+              <Grid container spacing={3}>
+                <Grid item size={{ xs: 6, md: 6 }}>
                   <TextField
                     required
                     fullWidth
@@ -285,8 +286,8 @@ const Appointment = () => {
                     onChange={handleChange}
                     variant="outlined"
                   />
-                </Grid2>
-                <Grid2 item size={{ xs: 6, md: 6 }}>
+                </Grid>
+                <Grid item size={{ xs: 6, md: 6 }}>
                   <TextField
                     required
                     fullWidth
@@ -298,8 +299,8 @@ const Appointment = () => {
                     onChange={handleChange}
                     variant="outlined"
                   />
-                </Grid2>
-                <Grid2 item size={{ xs: 6, md: 6 }}>
+                </Grid>
+                <Grid item size={{ xs: 6, md: 6 }}>
                   <TextField
                     required
                     fullWidth
@@ -310,8 +311,8 @@ const Appointment = () => {
                     onChange={handleChange}
                     variant="outlined"
                   />
-                </Grid2>
-                <Grid2 item size={{ xs: 3, md: 2 }}>
+                </Grid>
+                <Grid item size={{ xs: 3, md: 2 }}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       label="Chọn ngày"
@@ -331,8 +332,8 @@ const Appointment = () => {
                       )}
                     />
                   </LocalizationProvider>
-                </Grid2>
-                <Grid2 item size={{ xs: 3, md: 2 }} sx={{ paddingLeft: "0px" }}>
+                </Grid>
+                <Grid item size={{ xs: 3, md: 2 }} sx={{ paddingLeft: "0px" }}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
                       label="Chọn thời gian"
@@ -351,13 +352,13 @@ const Appointment = () => {
                       )}
                     />
                   </LocalizationProvider>
-                </Grid2>
-                <Grid2>
+                </Grid>
+                <Grid>
                   <Typography sx={{ top: "10px", position: "relative" }}>
                     <span style={{ color: "red" }}>*</span> Thời gian: 8h – 20h
                   </Typography>
-                </Grid2>
-                <Grid2 item size={{ xs: 12, md: 12 }}>
+                </Grid>
+                <Grid item size={{ xs: 12, md: 12 }}>
                   {/* <TextField
                     select
                     required
@@ -396,8 +397,8 @@ const Appointment = () => {
                       <MenuItem disabled>Không có danh mục</MenuItem>
                     )}
                   </TextField>
-                </Grid2>
-                <Grid2 item size={{ xs: 12, md: 12 }}>
+                </Grid>
+                <Grid item size={{ xs: 12, md: 12 }}>
                   {/* Select Service */}
                   {/* Select Service - Chỉ hiển thị các service thuộc subject đã chọn */}
                   <TextField
@@ -443,8 +444,8 @@ const Appointment = () => {
                       <MenuItem disabled>No services available</MenuItem>
                     )}
                   </TextField> */}
-                </Grid2>
-                {/* <Grid2 item size={{ xs: 12, md: 12 }}>
+                </Grid>
+                {/* <Grid item size={{ xs: 12, md: 12 }}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       label='Date'
@@ -460,8 +461,8 @@ const Appointment = () => {
                       )}
                     />
                   </LocalizationProvider>
-                </Grid2> */}
-                <Grid2 item size={{ xs: 12, md: 12 }}>
+                </Grid> */}
+                <Grid item size={{ xs: 12, md: 12 }}>
                   <TextField
                     fullWidth
                     id="comment"
@@ -473,8 +474,8 @@ const Appointment = () => {
                     onChange={handleChange}
                     variant="outlined"
                   />
-                </Grid2>
-                <Grid2 item xs={12}>
+                </Grid>
+                <Grid item xs={12}>
                   <Button
                     type="submit"
                     variant="contained"
@@ -491,11 +492,11 @@ const Appointment = () => {
                   >
                     Đặt lịch
                   </Button>
-                </Grid2>
-              </Grid2>
+                </Grid>
+              </Grid>
             </Box>
-          </Grid2>
-          {/* <Grid2
+          </Grid>
+          {/* <Grid
             item
             xs={12}
             md={6}
@@ -526,8 +527,8 @@ const Appointment = () => {
                 (123) 456-7890
               </Button>
             </Box>
-          </Grid2> */}
-        </Grid2>
+          </Grid> */}
+        </Grid>
       </Container>
     </>
   );
