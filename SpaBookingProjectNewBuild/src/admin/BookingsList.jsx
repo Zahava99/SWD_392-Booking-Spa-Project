@@ -36,10 +36,10 @@ export default function BookingsList({ limit, filterToday }) {
       try {
         const token = sessionStorage.getItem("token");
         const [appointmentsResponse, paymentsResponse] = await Promise.all([
-          axios.get("http://160.30.137.106:3000/api/appointments", {
+          axios.get("https://mcmapp.online/api/appointments", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://160.30.137.106:3000/api/payment", {
+          axios.get("https://mcmapp.online/api/payment", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -94,11 +94,11 @@ export default function BookingsList({ limit, filterToday }) {
         console.log("Extracted Service IDs:", serviceIds);
 
         const [customersResponse, servicesResponse] = await Promise.all([
-          axios.get("http://160.30.137.106:3000/api/account", {
+          axios.get("https://mcmapp.online/api/account", {
             headers: { Authorization: `Bearer ${token}` },
             params: { ids: customerIds.join(",") },
           }),
-          axios.get("http://160.30.137.106:3000/api/service", {
+          axios.get("https://mcmapp.online/api/service", {
             headers: { Authorization: `Bearer ${token}` },
             params: { ids: serviceIds.join(",") },
           }),

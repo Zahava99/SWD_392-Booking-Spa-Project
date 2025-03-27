@@ -28,7 +28,7 @@ export default function BookingStats() {
       try {
         const token = sessionStorage.getItem("token");
         const response = await axios.get(
-          "http://160.30.137.106:3000/api/appointments",
+          "https://mcmapp.online/api/appointments",
           {
             headers: { Authorization: `Bearer ${token}` },
           }

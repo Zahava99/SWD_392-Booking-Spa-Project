@@ -36,7 +36,7 @@ const Appointment = () => {
   })
 
   //Test
-  //http://160.30.137.106:3000/api/category
+  //https://mcmapp.online/api/category
   // useEffect(() => {
   //   const fetchCategories = async () => {
   //     try {
@@ -46,7 +46,7 @@ const Appointment = () => {
   //         return;
   //       }
 
-  //       const response = await axios.get('http://160.30.137.106:3000/api/category', {
+  //       const response = await axios.get('https://mcmapp.online/api/category', {
   //         headers: {
   //           Authorization: `Bearer ${token}`
   //         }
@@ -72,7 +72,7 @@ const Appointment = () => {
 
         // Fetch Subjects (Categories)
         const categoryResponse = await axios.get(
-          'http://160.30.137.106:3000/api/category',
+          'https://mcmapp.online/api/category',
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -83,7 +83,7 @@ const Appointment = () => {
 
         // Fetch Services
         const serviceResponse = await axios.get(
-          'http://160.30.137.106:3000/api/service',
+          'https://mcmapp.online/api/service',
           {
             headers: { Authorization: `Bearer ${token}` }
           }

@@ -48,12 +48,12 @@ const Payment = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://160.30.137.106:3000/api/payment/create",
+        "https://mcmapp.online/api/payment/create",
         {
           totalAmount: depositAmountNumber,
           appointmentId: appointmentId,
           method: 0,
-          cancelUrl: "http://160.30.137.106:3000/cancel",
+          cancelUrl: "https://mcmapp.online/cancel",
         },
         {
           headers: {

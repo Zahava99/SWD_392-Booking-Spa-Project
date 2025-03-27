@@ -56,7 +56,7 @@ const Appointment = () => {
 
         // Fetch Subjects (Categories)
         const categoryResponse = await axios.get(
-          "http://160.30.137.106:3000/api/category",
+          "https://mcmapp.online/api/category",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -68,7 +68,7 @@ const Appointment = () => {
 
         // Fetch Services
         const serviceResponse = await axios.get(
-          "http://160.30.137.106:3000/api/service",
+          "https://mcmapp.online/api/service",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -135,7 +135,7 @@ const Appointment = () => {
       return;
     }
     const profileResponse = await axios.get(
-      "http://160.30.137.106:3000/api/auth/profile",
+      "https://mcmapp.online/api/auth/profile",
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -167,7 +167,7 @@ const Appointment = () => {
     try {
       // Gọi API tạo appointment
       const appointmentResponse = await axios.post(
-        "http://160.30.137.106:3000/api/appointments",
+        "https://mcmapp.online/api/appointments",
         payload,
         {
           headers: { Authorization: `Bearer ${token}` },

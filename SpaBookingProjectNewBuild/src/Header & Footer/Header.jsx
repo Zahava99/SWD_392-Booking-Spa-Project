@@ -26,7 +26,7 @@ const Header = () => {
   // useEffect(() => {
   //   const token = sessionStorage.getItem('token')
   //   if (token) {
-  //     axios.get('http://160.30.137.106:3000/api/auth/profile', {
+  //     axios.get('https://mcmapp.online/api/auth/profile', {
   //       headers: { Authorization: `Bearer ${token}` }
   //     })
   //       .then(response => {
@@ -45,7 +45,7 @@ const Header = () => {
       const token = sessionStorage.getItem("token");
       if (token) {
         axios
-          .get("http://160.30.137.106:3000/api/auth/profile", {
+          .get("https://mcmapp.online/api/auth/profile", {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((response) => {

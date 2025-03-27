@@ -65,7 +65,7 @@ const Profile = () => {
     const token = sessionStorage.getItem("token");
     if (token) {
       axios
-        .get("http://160.30.137.106:3000/api/auth/profile", {
+        .get("https://mcmapp.online/api/auth/profile", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -125,7 +125,7 @@ const Profile = () => {
       };
       console.log("Dữ liệu gửi lên:", updatedData);
       axios
-        .put("http://160.30.137.106:3000/api/auth/profile", updatedData, {
+        .put("https://mcmapp.online/api/auth/profile", updatedData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -166,7 +166,7 @@ const Profile = () => {
     const token = sessionStorage.getItem("token");
 
     axios
-      .get("http://160.30.137.106:3000/api/appointments", {
+      .get("https://mcmapp.online/api/appointments", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -202,7 +202,7 @@ const Profile = () => {
       }
       try {
         const response = await axios.get(
-          "http://160.30.137.106:3000/api/service",
+          "https://mcmapp.online/api/service",
           {
             headers: { Authorization: `Bearer ${token}` },
           }

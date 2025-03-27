@@ -55,7 +55,7 @@ const Login = () => {
     console.log(formData);
     try {
       const response = await axios.post(
-        "http://160.30.137.106:3000/api/auth/login",
+        "https://mcmapp.online/api/auth/login",
         {
           email: formData.email,
           password: formData.password,

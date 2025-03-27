@@ -142,7 +142,7 @@ const Register = () => {
         }
         console.log("Form data to send:", formDataToSend);
         const response = await axios.post(
-          "http://160.30.137.106:3000/api/auth/register",
+          "https://mcmapp.online/api/auth/register",
           formDataToSend,
           {
             headers: {
