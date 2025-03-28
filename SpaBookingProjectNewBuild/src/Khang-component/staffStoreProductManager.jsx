@@ -13,7 +13,8 @@ import {
   useTheme,
 } from "@mui/material";
 import AdminCalendar from "../admin/AdminCalendar";
-import StoreProductManager from "../Khang-component/StoreProductManager"; // Giả định component này tồn tại
+import StoreProductManager from "../Khang-component/StoreProductManager";
+import PromotionManager from "../Khang-component/PromotionManager.jsx";
 import axios from "axios";
 
 function TabPanel(props) {
@@ -71,6 +72,7 @@ export default function StaffDashboard() {
             <Tab label="Dashboard" {...a11yProps(0)} />
             <Tab label="Calendar" {...a11yProps(1)} />
             <Tab label="Store Product Manager" {...a11yProps(2)} />
+            <Tab label="Promotion Manager" {...a11yProps(3)} />
           </Tabs>
 
           <TabPanel value={tabValue} index={0}>
@@ -90,6 +92,9 @@ export default function StaffDashboard() {
 
           <TabPanel value={tabValue} index={2}>
             <StoreProductManager />
+          </TabPanel>
+          <TabPanel value={tabValue} index={3}>
+            <PromotionManager />
           </TabPanel>
         </Box>
       </Paper>

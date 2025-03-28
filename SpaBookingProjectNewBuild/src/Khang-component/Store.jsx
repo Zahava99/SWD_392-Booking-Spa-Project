@@ -32,12 +32,12 @@
 //   const filteredProducts = products.filter(product => {
 //     const matchesSearch = product.name.toLowerCase().includes(searchTerm.trim().toLowerCase());
 //     const matchesCategory = selectedCategory === '' || product.category === selectedCategory;
-//     const matchesAvailability = 
+//     const matchesAvailability =
 //       (!availability.inStock && !availability.outOfStock) ||
 //       (availability.inStock && product.inStock) ||
 //       (availability.outOfStock && !product.inStock);
 //     const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
-//     const matchesFinish = 
+//     const matchesFinish =
 //       (!finishes.cream && !finishes.glimmer && !finishes.glitter && !finishes.glossy) ||
 //       (finishes.cream && product.finish === 'Cream') ||
 //       (finishes.glimmer && product.finish === 'Glimmer') ||
@@ -192,147 +192,239 @@
 
 // export default Store;
 
-
-
-
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import {
-  Box, Typography, Grid, Card, CardMedia, CardContent, Button,
-  TextField, Select, MenuItem, Checkbox, FormControlLabel, Slider, FormGroup
-} from '@mui/material';
+  Box,
+  Typography,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+  Checkbox,
+  FormControlLabel,
+  Slider,
+  FormGroup
+} from '@mui/material'
 
 const Store = ({ cart, setCart, handleAddToCart }) => {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [sortBy, setSortBy] = useState('default');
-  const [availability, setAvailability] = useState({ inStock: false, outOfStock: false });
-  const [priceRange, setPriceRange] = useState([0, 3000000]);
-  const [finishes, setFinishes] = useState({ cream: false, glimmer: false, glitter: false, glossy: false });
+  const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [sortBy, setSortBy] = useState('default')
+  const [availability, setAvailability] = useState({
+    inStock: false,
+    outOfStock: false
+  })
+  const [priceRange, setPriceRange] = useState([0, 3000000])
+  // const [finishes, setFinishes] = useState({
+  //   cream: false,
+  //   glimmer: false,
+  //   glitter: false,
+  //   glossy: false
+  // })
 
   // Lấy danh sách sản phẩm và danh mục từ API
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = sessionStorage.getItem('token');
+        const token = sessionStorage.getItem('token')
         const [productsResponse, categoriesResponse] = await Promise.all([
           axios.get('http://localhost:3000/api/products', {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { Authorization: `Bearer ${token}` }
           }),
           axios.get('http://localhost:3000/api/category', {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
+            headers: { Authorization: `Bearer ${token}` }
+          })
+        ])
 
-        setProducts(productsResponse.data.data || productsResponse.data || []);
-        setCategories(categoriesResponse.data.data || categoriesResponse.data || []);
+        setProducts(productsResponse.data.data || productsResponse.data || [])
+        setCategories(
+          categoriesResponse.data.data || categoriesResponse.data || []
+        )
 
-        console.log('Products:', productsResponse.data);
-        console.log('Categories:', categoriesResponse.data);
+        console.log('Products:', productsResponse.data)
+        console.log('Categories:', categoriesResponse.data)
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data:', error)
       }
-    };
+    }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   // Hàm lấy tên danh mục từ categoryId
-  const getCategoryName = (categoryId) => {
-    const category = categories.find((cat) => cat.id === categoryId);
-    return category ? category.name : 'Unknown';
-  };
+  const getCategoryName = categoryId => {
+    const category = categories.find(cat => cat.id === categoryId)
+    return category ? category.name : 'Unknown'
+  }
 
   // Định dạng giá tiền theo VND
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-  };
+  const formatPrice = price => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(price)
+  }
 
   // Tạo danh sách danh mục duy nhất từ sản phẩm
-  const uniqueCategories = [...new Set(products.map(product => product.category))];
+  const uniqueCategories = [
+    ...new Set(products.map(product => product.category))
+  ]
 
   // Lọc sản phẩm dựa trên các bộ lọc
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.trim().toLowerCase());
-    const matchesCategory = selectedCategory === '' || product.category === selectedCategory;
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchTerm.trim().toLowerCase())
+    const matchesCategory =
+      selectedCategory === '' || product.category === selectedCategory
     const matchesAvailability =
       (!availability.inStock && !availability.outOfStock) ||
       (availability.inStock && product.stock > 0) ||
-      (availability.outOfStock && product.stock === 0);
-    const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
-    const matchesFinish =
-      (!finishes.cream && !finishes.glimmer && !finishes.glitter && !finishes.glossy) ||
-      (finishes.cream && product.finish === 'Cream') ||
-      (finishes.glimmer && product.finish === 'Glimmer') ||
-      (finishes.glitter && product.finish === 'Glitter') ||
-      (finishes.glossy && product.finish === 'Glossy');
+      (availability.outOfStock && product.stock === 0)
+    const matchesPrice =
+      product.price >= priceRange[0] && product.price <= priceRange[1]
+    // const matchesFinish =
+    //   (!finishes.cream &&
+    //     !finishes.glimmer &&
+    //     !finishes.glitter &&
+    //     !finishes.glossy) ||
+    //   (finishes.cream && product.finish === 'Cream') ||
+    //   (finishes.glimmer && product.finish === 'Glimmer') ||
+    //   (finishes.glitter && product.finish === 'Glitter') ||
+    //   (finishes.glossy && product.finish === 'Glossy')
 
-    return matchesSearch && matchesCategory && matchesAvailability && matchesPrice && matchesFinish;
-  });
+    return (
+      matchesSearch &&
+      matchesCategory &&
+      matchesAvailability &&
+      matchesPrice
+      // matchesPrice &&
+      // matchesFinish
+    )
+  })
 
   // Sắp xếp sản phẩm
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (sortBy === 'priceLowToHigh') {
-      return a.price - b.price;
+      return a.price - b.price
     } else if (sortBy === 'priceHighToLow') {
-      return b.price - a.price;
+      return b.price - a.price
     }
-    return 0;
-  });
+    return 0
+  })
 
   return (
     <Box sx={{ p: 4, display: 'flex' }}>
       {/* Bộ lọc bên trái */}
       <Box sx={{ width: '20%', pr: 3 }}>
-        <Typography variant="h6" gutterBottom>Availability</Typography>
+        <Typography variant='h6' gutterBottom>
+          Availability
+        </Typography>
         <FormGroup>
           <FormControlLabel
-            control={<Checkbox checked={availability.inStock} onChange={(e) => setAvailability({ ...availability, inStock: e.target.checked })} />}
-            label="In stock"
+            control={
+              <Checkbox
+                checked={availability.inStock}
+                onChange={e =>
+                  setAvailability({
+                    ...availability,
+                    inStock: e.target.checked
+                  })
+                }
+              />
+            }
+            label='In stock'
           />
           <FormControlLabel
-            control={<Checkbox checked={availability.outOfStock} onChange={(e) => setAvailability({ ...availability, outOfStock: e.target.checked })} />}
-            label="Out of stock"
+            control={
+              <Checkbox
+                checked={availability.outOfStock}
+                onChange={e =>
+                  setAvailability({
+                    ...availability,
+                    outOfStock: e.target.checked
+                  })
+                }
+              />
+            }
+            label='Out of stock'
           />
         </FormGroup>
 
-        <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>Price</Typography>
+        <Typography variant='h6' gutterBottom sx={{ mt: 2 }}>
+          Price
+        </Typography>
         <Slider
           value={priceRange}
           onChange={(e, newValue) => setPriceRange(newValue)}
-          valueLabelDisplay="auto"
+          valueLabelDisplay='auto'
           min={0}
           max={3000000}
           step={10000}
           sx={{ width: '100%' }}
-          valueLabelFormat={(value) => formatPrice(value)}
+          valueLabelFormat={value => formatPrice(value)}
         />
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography>{formatPrice(priceRange[0])}</Typography>
           <Typography>{formatPrice(priceRange[1])}</Typography>
         </Box>
 
-        <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>Finish</Typography>
+        {/* <Typography variant='h6' gutterBottom sx={{ mt: 2 }}>
+          Finish
+        </Typography>
         <FormGroup>
           <FormControlLabel
-            control={<Checkbox checked={finishes.cream} onChange={(e) => setFinishes({ ...finishes, cream: e.target.checked })} />}
-            label="Cream"
+            control={
+              <Checkbox
+                checked={finishes.cream}
+                onChange={e =>
+                  setFinishes({ ...finishes, cream: e.target.checked })
+                }
+              />
+            }
+            label='Cream'
           />
           <FormControlLabel
-            control={<Checkbox checked={finishes.glimmer} onChange={(e) => setFinishes({ ...finishes, glimmer: e.target.checked })} />}
-            label="Glimmer"
+            control={
+              <Checkbox
+                checked={finishes.glimmer}
+                onChange={e =>
+                  setFinishes({ ...finishes, glimmer: e.target.checked })
+                }
+              />
+            }
+            label='Glimmer'
           />
           <FormControlLabel
-            control={<Checkbox checked={finishes.glitter} onChange={(e) => setFinishes({ ...finishes, glitter: e.target.checked })} />}
-            label="Glitter"
+            control={
+              <Checkbox
+                checked={finishes.glitter}
+                onChange={e =>
+                  setFinishes({ ...finishes, glitter: e.target.checked })
+                }
+              />
+            }
+            label='Glitter'
           />
           <FormControlLabel
-            control={<Checkbox checked={finishes.glossy} onChange={(e) => setFinishes({ ...finishes, glossy: e.target.checked })} />}
-            label="Glossy"
+            control={
+              <Checkbox
+                checked={finishes.glossy}
+                onChange={e =>
+                  setFinishes({ ...finishes, glossy: e.target.checked })
+                }
+              />
+            }
+            label='Glossy'
           />
-        </FormGroup>
+        </FormGroup> */}
       </Box>
 
       {/* Nội dung chính */}
@@ -341,18 +433,18 @@ const Store = ({ cart, setCart, handleAddToCart }) => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
           <Box sx={{ display: 'flex', gap: 2 }}>
             <TextField
-              label="Tìm kiếm sản phẩm"
-              variant="outlined"
+              label='Tìm kiếm sản phẩm'
+              variant='outlined'
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
             />
             <Select
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={e => setSelectedCategory(e.target.value)}
               displayEmpty
               sx={{ minWidth: 200 }}
             >
-              <MenuItem value="">Tất cả danh mục</MenuItem>
+              <MenuItem value=''>Tất cả danh mục</MenuItem>
               {uniqueCategories.map(categoryId => (
                 <MenuItem key={categoryId} value={categoryId}>
                   {getCategoryName(categoryId)}
@@ -364,12 +456,12 @@ const Store = ({ cart, setCart, handleAddToCart }) => {
             <Typography>{sortedProducts.length} products</Typography>
             <Select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+              onChange={e => setSortBy(e.target.value)}
               sx={{ minWidth: 150 }}
             >
-              <MenuItem value="default">Sort by</MenuItem>
-              <MenuItem value="priceLowToHigh">Price: Low to High</MenuItem>
-              <MenuItem value="priceHighToLow">Price: High to Low</MenuItem>
+              <MenuItem value='default'>Sort by</MenuItem>
+              <MenuItem value='priceLowToHigh'>Price: Low to High</MenuItem>
+              <MenuItem value='priceHighToLow'>Price: High to Low</MenuItem>
             </Select>
           </Box>
         </Box>
@@ -383,22 +475,30 @@ const Store = ({ cart, setCart, handleAddToCart }) => {
               <Grid item xs={12} sm={6} md={4} key={product._id}>
                 <Card>
                   <CardMedia
-                    component="img"
-                    height="200"
+                    component='img'
+                    height='200'
                     image={product.image}
                     alt={product.name}
                   />
                   <CardContent>
-                    <Typography variant="h6">{product.name}</Typography>
+                    <Typography variant='h6'>{product.name}</Typography>
+                    <Typography variant='body2' color='text.secondary'>
+                      Danh mục: {getCategoryName(product.category)}
+                    </Typography>
+                    <Typography variant='body2' color='text.secondary'>
+                      Số lượng: {product.stock}
+                    </Typography>
                     <Box sx={{ display: 'flex', gap: 1 }}>
-                      <Typography variant="h6" color="primary">
+                      <Typography variant='h6' color='primary'>
                         {formatPrice(product.price)}
                       </Typography>
                     </Box>
                     <Button
-                      variant="contained"
+                      variant='contained'
                       sx={{ mt: 2 }}
-                      onClick={() => handleAddToCart({ ...product, id: product._id })}
+                      onClick={() =>
+                        handleAddToCart({ ...product, id: product._id })
+                      }
                     >
                       Thêm vào giỏ hàng
                     </Button>
@@ -410,7 +510,7 @@ const Store = ({ cart, setCart, handleAddToCart }) => {
         )}
       </Box>
     </Box>
-  );
-};
+  )
+}
 
-export default Store;
+export default Store
