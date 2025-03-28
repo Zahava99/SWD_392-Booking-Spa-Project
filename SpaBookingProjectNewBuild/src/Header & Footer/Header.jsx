@@ -1,280 +1,3 @@
-// import { useState, useEffect } from "react";
-// import {
-//   AppBar,
-//   Toolbar,
-//   Button,
-//   Box,
-//   Menu,
-//   MenuItem,
-//   InputBase,
-//   IconButton,
-// } from "@mui/material";
-// import { Link, useNavigate } from "react-router-dom";
-// import SearchIcon from "@mui/icons-material/Search";
-// import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-// import logo from "../assets/logo-image/logo.jpg";
-// import axios from "axios";
-
-// const Header = () => {
-//   const [serviceAnchorEl, setServiceAnchorEl] = useState(null);
-//   //
-//   const [isLoggedIn, setIsLoggedIn] = useState(false); // State theo dõi trạng thái đăng nhập
-//   const [userName, setUserName] = useState(""); // State lưu tên người dùng
-//   //
-//   const navigate = useNavigate();
-//   //
-//   // useEffect(() => {
-//   //   const token = sessionStorage.getItem('token')
-//   //   if (token) {
-//   //     axios.get('https://mcmapp.online/api/auth/profile', {
-//   //       headers: { Authorization: `Bearer ${token}` }
-//   //     })
-//   //       .then(response => {
-//   //         setIsLoggedIn(true);
-//   //         setUserName(response.data.data.fName || 'Người dùng');
-//   //         // window.location.reload();
-//   //       })
-//   //       .catch(() => {
-//   //         setIsLoggedIn(false);
-//   //         setUserName('');
-//   //       });
-//   //   }
-//   // }, [])
-//   useEffect(() => {
-//     const updateAuthState = () => {
-//       const token = sessionStorage.getItem("token");
-//       if (token) {
-//         axios
-//           .get("https://mcmapp.online/api/auth/profile", {
-//             headers: { Authorization: `Bearer ${token}` },
-//           })
-//           .then((response) => {
-//             setIsLoggedIn(true);
-//             setUserName(response.data.data.fName || "Người dùng");
-//           })
-//           .catch(() => {
-//             setIsLoggedIn(false);
-//             setUserName("");
-//           });
-//       } else {
-//         setIsLoggedIn(false);
-//         setUserName("");
-//       }
-//     };
-
-//     updateAuthState();
-//     window.addEventListener("authChange", updateAuthState);
-
-//     return () => {
-//       window.removeEventListener("authChange", updateAuthState);
-//     };
-//   }, []);
-//   const handleClick = (event, setAnchorEl) => {
-//     setAnchorEl(event.currentTarget);
-//   };
-
-//   const handleClose = (setAnchorEl) => {
-//     setAnchorEl(null);
-//   };
-
-//   //
-//   const handleLogout = () => {
-//     // Logic đăng xuất: xóa token, reset state
-//     sessionStorage.removeItem("token");
-//     setIsLoggedIn(false);
-//     setUserName("");
-//     navigate("/login");
-//     window.location.reload();
-//   };
-//   //
-//   return (
-//     <AppBar
-//       position="static"
-//       color="default"
-//       sx={{ boxShadow: 1, backgroundColor: "white" }}
-//     >
-//       <Toolbar>
-//         <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
-//           <Link to="/">
-//             <img
-//               src={logo}
-//               alt="logo"
-//               style={{ width: "50px", height: "50px", marginRight: "10px" }}
-//             />
-//           </Link>
-//         </Box>
-
-//         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-//           <Button
-//             color="inherit"
-//             component={Link}
-//             to="/"
-//             sx={{ color: "#000", textTransform: "none", fontWeight: "medium" }}
-//           >
-//             Trang chủ
-//           </Button>
-
-//           <Button
-//             color="inherit"
-//             endIcon={<KeyboardArrowDownIcon />}
-//             onClick={(e) => handleClick(e, setServiceAnchorEl)}
-//             sx={{ color: "#000", textTransform: "none", fontWeight: "medium" }}
-//           >
-//             Danh mục Spa
-//           </Button>
-//           <Menu
-//             anchorEl={serviceAnchorEl}
-//             open={Boolean(serviceAnchorEl)}
-//             onClose={() => handleClose(setServiceAnchorEl)}
-//           >
-//             <MenuItem
-//               component={Link}
-//               to="/massage"
-//               onClick={() => handleClose(setServiceAnchorEl)}
-//             >
-//               Massage
-//             </MenuItem>
-//             <MenuItem
-//               component={Link}
-//               to="/facial"
-//               onClick={() => handleClose(setServiceAnchorEl)}
-//             >
-//               Facial
-//             </MenuItem>
-//             <MenuItem
-//               component={Link}
-//               to="/body-treatment"
-//               onClick={() => handleClose(setServiceAnchorEl)}
-//             >
-//               Body Treatment
-//             </MenuItem>
-//             <MenuItem
-//               component={Link}
-//               to="/aromatherapy"
-//               onClick={() => handleClose(setServiceAnchorEl)}
-//             >
-//               Aromatherapy
-//             </MenuItem>
-//           </Menu>
-
-//           <Button
-//             color="inherit"
-//             component={Link}
-//             to="/blog"
-//             sx={{ color: "#000", textTransform: "none", fontWeight: "medium" }}
-//           >
-//             Blog
-//           </Button>
-
-//           <Button
-//             color="inherit"
-//             component={Link}
-//             to="/about"
-//             sx={{ color: "#000", textTransform: "none", fontWeight: "medium" }}
-//           >
-//             Về chúng tôi
-//           </Button>
-
-//           <Button
-//             color="inherit"
-//             component={Link}
-//             to="/contact"
-//             sx={{ color: "#000", textTransform: "none", fontWeight: "medium" }}
-//           >
-//             Liên hệ
-//           </Button>
-//           {isLoggedIn ? (
-//             <Button
-//               color="inherit"
-//               onClick={handleLogout}
-//               sx={{
-//                 color: "#000",
-//                 textTransform: "none",
-//                 fontWeight: "medium",
-//               }}
-//             >
-//               Đăng xuất
-//             </Button>
-//           ) : (
-//             <Button
-//               color="inherit"
-//               component={Link}
-//               to="/login"
-//               sx={{
-//                 color: "#000",
-//                 textTransform: "none",
-//                 fontWeight: "medium",
-//               }}
-//             >
-//               Đăng nhập
-//             </Button>
-//           )}
-//         </Box>
-
-//         {/* <Box sx={{ display: 'flex', alignItems: 'center', ml: 2, border: '1px solid #ddd', borderRadius: '4px' }}>
-//           <InputBase
-//             placeholder="Tìm Kiếm..."
-//             sx={{ ml: 1, flex: 1, fontSize: '0.9rem' }}
-//           />
-//           <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
-//             <SearchIcon />
-//           </IconButton>
-//         </Box> */}
-//         {/* Thanh tìm kiếm hoặc tên người dùng */}
-//         {/* {isLoggedIn ? (
-//           <Button
-//             color='inherit'
-//             component={Link}
-//             to='/profile'
-//             sx={{
-//               ml: 2,
-//               color: '#000',
-//               textTransform: 'none',
-//               fontWeight: 'medium'
-//             }}
-//           >
-//             {userName || 'Người dùng'}
-//           </Button>
-//         ) : (
-//           <Box
-//             sx={{
-//               display: 'flex',
-//               alignItems: 'center',
-//               ml: 2,
-//               border: '1px solid #ddd',
-//               borderRadius: '4px'
-//             }}
-//           >
-//             <InputBase
-//               placeholder='Tìm Kiếm...'
-//               sx={{ ml: 1, flex: 1, fontSize: '0.9rem' }}
-//             />
-//             <IconButton type='submit' sx={{ p: '10px' }} aria-label='search'>
-//               <SearchIcon />
-//             </IconButton>
-//           </Box>
-//         )} */}
-//         {isLoggedIn && (
-//           <Button
-//             color="inherit"
-//             component={Link}
-//             to="/profile"
-//             sx={{
-//               ml: 2,
-//               color: "#000",
-//               textTransform: "none",
-//               fontWeight: "medium",
-//             }}
-//           >
-//             {userName || "Người dùng"}
-//           </Button>
-//         )}
-//       </Toolbar>
-//     </AppBar>
-//   );
-// };
-
-// export default Header;
 import { useState, useEffect } from 'react'
 import {
   AppBar,
@@ -565,6 +288,81 @@ const Header = ({ cart = [], setCart, handleAddToCart }) => {
     return Math.max(0, discountedTotal)
   }
 
+  // const handleCheckout = async () => {
+  //   setError('')
+  //   const token = sessionStorage.getItem('token')
+  //   if (!token) {
+  //     setError('Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục thanh toán.')
+  //     return
+  //   }
+
+  //   // const totalAmount = calculateTotalAfterDiscount()
+  //   // if (totalAmount === 0) {
+  //   //   setError('Giỏ hàng trống!')
+  //   //   return
+  //   // }
+  //   const totalAmount = calculateTotal()
+  //   if (totalAmount === 0) {
+  //     setError('Giỏ hàng trống!')
+  //     return
+  //   }
+
+  //   if (discountError) {
+  //     setError(discountError)
+  //     return
+  //   }
+
+  //   const payload = {
+  //     totalAmount: totalAmount,
+  //     description: 'Thanh toán đơn hàng',
+  //     // promotion: "null",
+  //     // promotion: selectedPromotion || null,
+  //     promotion:
+  //       selectedPromotion === 'Không sử dụng mã khuyến mãi' ||
+  //       !selectedPromotion
+  //         ? null
+  //         : selectedPromotion,
+  //     cancelUrl: 'http://localhost:5173/cancelpayment',
+  //     successUrl: 'http://localhost:5173/success'
+  //   }
+  //   console.log('PayloadCheckOut:', payload)
+
+  //   try {
+  //     setLoading(true)
+  //     localStorage.setItem('cartBeforeCheckout', JSON.stringify(cart))
+  //     localStorage.removeItem('paymentCancelled')
+
+  //     const response = await axios.post(
+  //       'https://mcmapp.online/api/product-payment/create',
+  //       payload,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`
+  //         }
+  //       }
+  //     )
+
+  //     if (response.data && response.data.paymentLink) {
+  //       setPaymentLink(response.data.paymentLink)
+  //       window.location.href = response.data.paymentLink
+  //       setOpenCart(false)
+  //     } else {
+  //       setError('Không nhận được link thanh toán từ server')
+  //     }
+  //   } catch (err) {
+  //     console.error('Error during checkout:', err)
+  //     if (err.response) {
+  //       setError(
+  //         err.response.data.message ||
+  //           'Có lỗi xảy ra trong quá trình thanh toán'
+  //       )
+  //     } else {
+  //       setError('Không thể kết nối đến server')
+  //     }
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }
   const handleCheckout = async () => {
     setError('')
     const token = sessionStorage.getItem('token')
@@ -572,43 +370,36 @@ const Header = ({ cart = [], setCart, handleAddToCart }) => {
       setError('Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục thanh toán.')
       return
     }
-
-    // const totalAmount = calculateTotalAfterDiscount()
-    // if (totalAmount === 0) {
-    //   setError('Giỏ hàng trống!')
-    //   return
-    // }
+  
     const totalAmount = calculateTotal()
     if (totalAmount === 0) {
       setError('Giỏ hàng trống!')
       return
     }
-
+  
     if (discountError) {
       setError(discountError)
       return
     }
-
+  
     const payload = {
       totalAmount: totalAmount,
       description: 'Thanh toán đơn hàng',
-      // promotion: "null",
-      // promotion: selectedPromotion || null,
       promotion:
-        selectedPromotion === 'Không sử dụng mã khuyến mãi' ||
-        !selectedPromotion
+        selectedPromotion === 'Không sử dụng mã khuyến mãi' || !selectedPromotion
           ? null
           : selectedPromotion,
       cancelUrl: 'http://localhost:5173/cancelpayment',
       successUrl: 'http://localhost:5173/success'
     }
     console.log('PayloadCheckOut:', payload)
-
+  
     try {
       setLoading(true)
       localStorage.setItem('cartBeforeCheckout', JSON.stringify(cart))
       localStorage.removeItem('paymentCancelled')
-
+  
+      // Gửi yêu cầu thanh toán
       const response = await axios.post(
         'https://mcmapp.online/api/product-payment/create',
         payload,
@@ -618,11 +409,44 @@ const Header = ({ cart = [], setCart, handleAddToCart }) => {
           }
         }
       )
-
+  
       if (response.data && response.data.paymentLink) {
         setPaymentLink(response.data.paymentLink)
-        window.location.href = response.data.paymentLink
-        setOpenCart(false)
+  
+        // Cập nhật stock sau khi thanh toán thành công
+        const cartBeforeCheckout = JSON.parse(localStorage.getItem('cartBeforeCheckout')) || [];
+        for (const item of cartBeforeCheckout) {
+          const updatedStock = item.stock - item.quantity; // Tính stock mới
+          if (updatedStock < 0) {
+            throw new Error(`Sản phẩm ${item.name} không đủ hàng trong kho!`);
+          }
+  
+          // Gửi yêu cầu cập nhật stock cho từng sản phẩm
+          await axios.put(
+            `https://mcmapp.online/api/products/${item._id}`,
+            {
+              name: item.name,
+              quantity: item.quantity,
+              description: item.description,
+              price: item.price,
+              promotion: item.promotion,
+              category: item.category,
+              image: item.image,
+              stock: updatedStock // Stock mới sau khi trừ
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}` // Giả sử API yêu cầu token
+              }
+            }
+          );
+        }
+  
+        // Xóa giỏ hàng sau khi cập nhật stock thành công
+        setCart([]);
+        localStorage.removeItem('cartBeforeCheckout');
+        window.location.href = response.data.paymentLink; // Chuyển hướng tới link thanh toán
+        setOpenCart(false);
       } else {
         setError('Không nhận được link thanh toán từ server')
       }
@@ -630,17 +454,15 @@ const Header = ({ cart = [], setCart, handleAddToCart }) => {
       console.error('Error during checkout:', err)
       if (err.response) {
         setError(
-          err.response.data.message ||
-            'Có lỗi xảy ra trong quá trình thanh toán'
+          err.response.data.message || 'Có lỗi xảy ra trong quá trình thanh toán'
         )
       } else {
-        setError('Không thể kết nối đến server')
+        setError(err.message || 'Không thể kết nối đến server')
       }
     } finally {
       setLoading(false)
     }
   }
-
   return (
     <AppBar
       position='static'

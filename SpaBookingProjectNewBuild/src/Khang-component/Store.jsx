@@ -208,9 +208,14 @@ import {
   Checkbox,
   FormControlLabel,
   Slider,
-  FormGroup
+  FormGroup,
+  Breadcrumbs,
+  Link as MuiLink,
 } from '@mui/material'
-
+import { Link } from 'react-router-dom'
+import HomeIcon from '@mui/icons-material/Home';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import SpaIcon from '@mui/icons-material/Spa';
 const Store = ({ cart, setCart, handleAddToCart }) => {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
@@ -301,10 +306,7 @@ const Store = ({ cart, setCart, handleAddToCart }) => {
     //   (finishes.glossy && product.finish === 'Glossy')
 
     return (
-      matchesSearch &&
-      matchesCategory &&
-      matchesAvailability &&
-      matchesPrice
+      matchesSearch && matchesCategory && matchesAvailability && matchesPrice
       // matchesPrice &&
       // matchesFinish
     )
@@ -321,62 +323,127 @@ const Store = ({ cart, setCart, handleAddToCart }) => {
   })
 
   return (
-    <Box sx={{ p: 4, display: 'flex' }}>
-      {/* Bộ lọc bên trái */}
-      <Box sx={{ width: '20%', pr: 3 }}>
-        <Typography variant='h6' gutterBottom>
-          Availability
+    <>
+      <Box
+        sx={{
+          height: '300px',
+          backgroundImage:
+            // 'url(https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80)',
+            'url(https://plus.unsplash.com/premium_photo-1661723502172-7d06afdee178?q=80&w=2070&auto=format&fit=crop)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }}
+      >
+        <Typography
+          variant='h2'
+          component='h1'
+          sx={{
+            color: 'white',
+            fontWeight: 'bold',
+            position: 'relative',
+            zIndex: 1,
+            mb: 2
+          }}
+        >
+          Store
         </Typography>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={availability.inStock}
-                onChange={e =>
-                  setAvailability({
-                    ...availability,
-                    inStock: e.target.checked
-                  })
-                }
-              />
-            }
-            label='In stock'
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={availability.outOfStock}
-                onChange={e =>
-                  setAvailability({
-                    ...availability,
-                    outOfStock: e.target.checked
-                  })
-                }
-              />
-            }
-            label='Out of stock'
-          />
-        </FormGroup>
+        <Breadcrumbs
+          aria-label='breadcrumb'
+          sx={{
+            color: 'white',
+            position: 'relative',
+            zIndex: 1
+          }}
+        >
+          <MuiLink
+            component={Link}
+            to='/'
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              color: 'white',
+              textDecoration: 'none',
+              '&:hover': {
+                textDecoration: 'underline'
+              }
+            }}
+          >
+            <HomeIcon sx={{ mr: 0.5 }} fontSize='inherit' />
+            Trang chủ
+          </MuiLink>
+          <Typography color='white'>Store</Typography>
+        </Breadcrumbs>
+      </Box>
+      <Box sx={{ p: 4, display: 'flex' }}>
+        {/* Bộ lọc bên trái */}
+        <Box sx={{ width: '20%', pr: 3 }}>
+          <Typography variant='h6' gutterBottom>
+            Availability
+          </Typography>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={availability.inStock}
+                  onChange={e =>
+                    setAvailability({
+                      ...availability,
+                      inStock: e.target.checked
+                    })
+                  }
+                />
+              }
+              label='In stock'
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={availability.outOfStock}
+                  onChange={e =>
+                    setAvailability({
+                      ...availability,
+                      outOfStock: e.target.checked
+                    })
+                  }
+                />
+              }
+              label='Out of stock'
+            />
+          </FormGroup>
 
-        <Typography variant='h6' gutterBottom sx={{ mt: 2 }}>
-          Price
-        </Typography>
-        <Slider
-          value={priceRange}
-          onChange={(e, newValue) => setPriceRange(newValue)}
-          valueLabelDisplay='auto'
-          min={0}
-          max={3000000}
-          step={10000}
-          sx={{ width: '100%' }}
-          valueLabelFormat={value => formatPrice(value)}
-        />
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography>{formatPrice(priceRange[0])}</Typography>
-          <Typography>{formatPrice(priceRange[1])}</Typography>
-        </Box>
+          <Typography variant='h6' gutterBottom sx={{ mt: 2 }}>
+            Price
+          </Typography>
+          <Slider
+            value={priceRange}
+            onChange={(e, newValue) => setPriceRange(newValue)}
+            valueLabelDisplay='auto'
+            min={0}
+            max={3000000}
+            step={10000}
+            sx={{ width: '100%' }}
+            valueLabelFormat={value => formatPrice(value)}
+          />
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography>{formatPrice(priceRange[0])}</Typography>
+            <Typography>{formatPrice(priceRange[1])}</Typography>
+          </Box>
 
-        {/* <Typography variant='h6' gutterBottom sx={{ mt: 2 }}>
+          {/* <Typography variant='h6' gutterBottom sx={{ mt: 2 }}>
           Finish
         </Typography>
         <FormGroup>
@@ -425,91 +492,92 @@ const Store = ({ cart, setCart, handleAddToCart }) => {
             label='Glossy'
           />
         </FormGroup> */}
-      </Box>
-
-      {/* Nội dung chính */}
-      <Box sx={{ width: '80%' }}>
-        {/* Thanh tìm kiếm, danh mục và sắp xếp */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <TextField
-              label='Tìm kiếm sản phẩm'
-              variant='outlined'
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-            />
-            <Select
-              value={selectedCategory}
-              onChange={e => setSelectedCategory(e.target.value)}
-              displayEmpty
-              sx={{ minWidth: 200 }}
-            >
-              <MenuItem value=''>Tất cả danh mục</MenuItem>
-              {uniqueCategories.map(categoryId => (
-                <MenuItem key={categoryId} value={categoryId}>
-                  {getCategoryName(categoryId)}
-                </MenuItem>
-              ))}
-            </Select>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography>{sortedProducts.length} products</Typography>
-            <Select
-              value={sortBy}
-              onChange={e => setSortBy(e.target.value)}
-              sx={{ minWidth: 150 }}
-            >
-              <MenuItem value='default'>Sort by</MenuItem>
-              <MenuItem value='priceLowToHigh'>Price: Low to High</MenuItem>
-              <MenuItem value='priceHighToLow'>Price: High to Low</MenuItem>
-            </Select>
-          </Box>
         </Box>
 
-        {/* Danh sách sản phẩm */}
-        {sortedProducts.length === 0 ? (
-          <Typography sx={{ mt: 2 }}>Không tìm thấy sản phẩm nào.</Typography>
-        ) : (
-          <Grid container spacing={3}>
-            {sortedProducts.map(product => (
-              <Grid item xs={12} sm={6} md={4} key={product._id}>
-                <Card>
-                  <CardMedia
-                    component='img'
-                    height='200'
-                    image={product.image}
-                    alt={product.name}
-                  />
-                  <CardContent>
-                    <Typography variant='h6'>{product.name}</Typography>
-                    <Typography variant='body2' color='text.secondary'>
-                      Danh mục: {getCategoryName(product.category)}
-                    </Typography>
-                    <Typography variant='body2' color='text.secondary'>
-                      Số lượng: {product.stock}
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      <Typography variant='h6' color='primary'>
-                        {formatPrice(product.price)}
+        {/* Nội dung chính */}
+        <Box sx={{ width: '80%' }}>
+          {/* Thanh tìm kiếm, danh mục và sắp xếp */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <TextField
+                label='Tìm kiếm sản phẩm'
+                variant='outlined'
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+              />
+              <Select
+                value={selectedCategory}
+                onChange={e => setSelectedCategory(e.target.value)}
+                displayEmpty
+                sx={{ minWidth: 200 }}
+              >
+                <MenuItem value=''>Tất cả danh mục</MenuItem>
+                {uniqueCategories.map(categoryId => (
+                  <MenuItem key={categoryId} value={categoryId}>
+                    {getCategoryName(categoryId)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography>{sortedProducts.length} products</Typography>
+              <Select
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+                sx={{ minWidth: 150 }}
+              >
+                <MenuItem value='default'>Sort by</MenuItem>
+                <MenuItem value='priceLowToHigh'>Price: Low to High</MenuItem>
+                <MenuItem value='priceHighToLow'>Price: High to Low</MenuItem>
+              </Select>
+            </Box>
+          </Box>
+
+          {/* Danh sách sản phẩm */}
+          {sortedProducts.length === 0 ? (
+            <Typography sx={{ mt: 2 }}>Không tìm thấy sản phẩm nào.</Typography>
+          ) : (
+            <Grid container spacing={3}>
+              {sortedProducts.map(product => (
+                <Grid item xs={12} sm={6} md={4} key={product._id}>
+                  <Card>
+                    <CardMedia
+                      component='img'
+                      height='200'
+                      image={product.image}
+                      alt={product.name}
+                    />
+                    <CardContent>
+                      <Typography variant='h6'>{product.name}</Typography>
+                      <Typography variant='body2' color='text.secondary'>
+                        Danh mục: {getCategoryName(product.category)}
                       </Typography>
-                    </Box>
-                    <Button
-                      variant='contained'
-                      sx={{ mt: 2 }}
-                      onClick={() =>
-                        handleAddToCart({ ...product, id: product._id })
-                      }
-                    >
-                      Thêm vào giỏ hàng
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        )}
+                      <Typography variant='body2' color='text.secondary'>
+                        Số lượng: {product.stock}
+                      </Typography>
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Typography variant='h6' color='primary'>
+                          {formatPrice(product.price)}
+                        </Typography>
+                      </Box>
+                      <Button
+                        variant='contained'
+                        sx={{ mt: 2 }}
+                        onClick={() =>
+                          handleAddToCart({ ...product, id: product._id })
+                        }
+                      >
+                        Thêm vào giỏ hàng
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </Box>
       </Box>
-    </Box>
+    </>
   )
 }
 

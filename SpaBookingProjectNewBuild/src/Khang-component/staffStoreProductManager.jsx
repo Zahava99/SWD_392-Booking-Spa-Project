@@ -70,30 +70,31 @@ export default function StaffDashboard() {
             indicatorColor="primary"
           >
             <Tab label="Dashboard" {...a11yProps(0)} />
-            <Tab label="Calendar" {...a11yProps(1)} />
-            <Tab label="Store Product Manager" {...a11yProps(2)} />
-            <Tab label="Promotion Manager" {...a11yProps(3)} />
+            {/* <Tab label="Calendar" {...a11yProps(1)} /> */}
+            <Tab label="Store Product Manager" {...a11yProps(1)} />
+            <Tab label="Promotion Manager" {...a11yProps(2)} />
           </Tabs>
 
           <TabPanel value={tabValue} index={0}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Paper sx={{ p: 2 }}>
-                  <Typography variant="h6" gutterBottom>
-                    Today Appointments
+                  <Typography variant="h6" gutterBottom sx={{ textAlign: "center", fontSize: "30px" }}>
+                  Work distribution schedule
                   </Typography>
+                  <AdminCalendar />
                 </Paper>
               </Grid>
             </Grid>
           </TabPanel>
-          <TabPanel value={tabValue} index={1}>
+          {/* <TabPanel value={tabValue} index={1}>
             <AdminCalendar />
-          </TabPanel>
+          </TabPanel> */}
 
-          <TabPanel value={tabValue} index={2}>
+          <TabPanel value={tabValue} index={1}>
             <StoreProductManager />
           </TabPanel>
-          <TabPanel value={tabValue} index={3}>
+          <TabPanel value={tabValue} index={2}>
             <PromotionManager />
           </TabPanel>
         </Box>

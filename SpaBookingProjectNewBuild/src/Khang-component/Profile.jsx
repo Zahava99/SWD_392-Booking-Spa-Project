@@ -258,7 +258,7 @@ const Profile = () => {
         sx={{
           height: "300px",
           backgroundImage:
-            "url(https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80)",
+            "url(https://images.unsplash.com/photo-1458501534264-7d326fa0ca04?q=80&w=2070&auto=format&fit=crop)",
           backgroundSize: "cover",
           backgroundPosition: "center",
           display: "flex",
