@@ -317,7 +317,7 @@ const Profile = () => {
       </Box>
 
       <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Grid container spacing={4}>
+        <Grid container spacing={4} sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
           <Grid item xs={12} md={4}>
             <Paper
               elevation={3}
