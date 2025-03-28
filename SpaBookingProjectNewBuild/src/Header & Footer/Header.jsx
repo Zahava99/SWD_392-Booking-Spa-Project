@@ -838,6 +838,81 @@ const Header = ({ cart = [], setCart, handleAddToCart }) => {
     return Math.max(0, discountedTotal)
   }
 
+  // const handleCheckout = async () => {
+  //   setError('')
+  //   const token = sessionStorage.getItem('token')
+  //   if (!token) {
+  //     setError('Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục thanh toán.')
+  //     return
+  //   }
+
+  //   // const totalAmount = calculateTotalAfterDiscount()
+  //   // if (totalAmount === 0) {
+  //   //   setError('Giỏ hàng trống!')
+  //   //   return
+  //   // }
+  //   const totalAmount = calculateTotal()
+  //   if (totalAmount === 0) {
+  //     setError('Giỏ hàng trống!')
+  //     return
+  //   }
+
+  //   if (discountError) {
+  //     setError(discountError)
+  //     return
+  //   }
+
+  //   const payload = {
+  //     totalAmount: totalAmount,
+  //     description: 'Thanh toán đơn hàng',
+  //     // promotion: "null",
+  //     // promotion: selectedPromotion || null,
+  //     promotion:
+  //       selectedPromotion === 'Không sử dụng mã khuyến mãi' ||
+  //       !selectedPromotion
+  //         ? null
+  //         : selectedPromotion,
+  //     cancelUrl: 'http://localhost:5173/cancelpayment',
+  //     successUrl: 'http://localhost:5173/success'
+  //   }
+  //   console.log('PayloadCheckOut:', payload)
+
+  //   try {
+  //     setLoading(true)
+  //     localStorage.setItem('cartBeforeCheckout', JSON.stringify(cart))
+  //     localStorage.removeItem('paymentCancelled')
+
+  //     const response = await axios.post(
+  //       'http://localhost:3000/api/product-payment/create',
+  //       payload,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`
+  //         }
+  //       }
+  //     )
+
+  //     if (response.data && response.data.paymentLink) {
+  //       setPaymentLink(response.data.paymentLink)
+  //       window.location.href = response.data.paymentLink
+  //       setOpenCart(false)
+  //     } else {
+  //       setError('Không nhận được link thanh toán từ server')
+  //     }
+  //   } catch (err) {
+  //     console.error('Error during checkout:', err)
+  //     if (err.response) {
+  //       setError(
+  //         err.response.data.message ||
+  //           'Có lỗi xảy ra trong quá trình thanh toán'
+  //       )
+  //     } else {
+  //       setError('Không thể kết nối đến server')
+  //     }
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }
   const handleCheckout = async () => {
     setError('')
     const token = sessionStorage.getItem('token')
@@ -845,43 +920,36 @@ const Header = ({ cart = [], setCart, handleAddToCart }) => {
       setError('Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục thanh toán.')
       return
     }
-
-    // const totalAmount = calculateTotalAfterDiscount()
-    // if (totalAmount === 0) {
-    //   setError('Giỏ hàng trống!')
-    //   return
-    // }
+  
     const totalAmount = calculateTotal()
     if (totalAmount === 0) {
       setError('Giỏ hàng trống!')
       return
     }
-
+  
     if (discountError) {
       setError(discountError)
       return
     }
-
+  
     const payload = {
       totalAmount: totalAmount,
       description: 'Thanh toán đơn hàng',
-      // promotion: "null",
-      // promotion: selectedPromotion || null,
       promotion:
-        selectedPromotion === 'Không sử dụng mã khuyến mãi' ||
-        !selectedPromotion
+        selectedPromotion === 'Không sử dụng mã khuyến mãi' || !selectedPromotion
           ? null
           : selectedPromotion,
       cancelUrl: 'http://localhost:5173/cancelpayment',
       successUrl: 'http://localhost:5173/success'
     }
     console.log('PayloadCheckOut:', payload)
-
+  
     try {
       setLoading(true)
       localStorage.setItem('cartBeforeCheckout', JSON.stringify(cart))
       localStorage.removeItem('paymentCancelled')
-
+  
+      // Gửi yêu cầu thanh toán
       const response = await axios.post(
         'http://localhost:3000/api/product-payment/create',
         payload,
@@ -891,11 +959,44 @@ const Header = ({ cart = [], setCart, handleAddToCart }) => {
           }
         }
       )
-
+  
       if (response.data && response.data.paymentLink) {
         setPaymentLink(response.data.paymentLink)
-        window.location.href = response.data.paymentLink
-        setOpenCart(false)
+  
+        // Cập nhật stock sau khi thanh toán thành công
+        const cartBeforeCheckout = JSON.parse(localStorage.getItem('cartBeforeCheckout')) || [];
+        for (const item of cartBeforeCheckout) {
+          const updatedStock = item.stock - item.quantity; // Tính stock mới
+          if (updatedStock < 0) {
+            throw new Error(`Sản phẩm ${item.name} không đủ hàng trong kho!`);
+          }
+  
+          // Gửi yêu cầu cập nhật stock cho từng sản phẩm
+          await axios.put(
+            `http://localhost:3000/api/products/${item._id}`,
+            {
+              name: item.name,
+              quantity: item.quantity,
+              description: item.description,
+              price: item.price,
+              promotion: item.promotion,
+              category: item.category,
+              image: item.image,
+              stock: updatedStock // Stock mới sau khi trừ
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}` // Giả sử API yêu cầu token
+              }
+            }
+          );
+        }
+  
+        // Xóa giỏ hàng sau khi cập nhật stock thành công
+        setCart([]);
+        localStorage.removeItem('cartBeforeCheckout');
+        window.location.href = response.data.paymentLink; // Chuyển hướng tới link thanh toán
+        setOpenCart(false);
       } else {
         setError('Không nhận được link thanh toán từ server')
       }
@@ -903,11 +1004,10 @@ const Header = ({ cart = [], setCart, handleAddToCart }) => {
       console.error('Error during checkout:', err)
       if (err.response) {
         setError(
-          err.response.data.message ||
-            'Có lỗi xảy ra trong quá trình thanh toán'
+          err.response.data.message || 'Có lỗi xảy ra trong quá trình thanh toán'
         )
       } else {
-        setError('Không thể kết nối đến server')
+        setError(err.message || 'Không thể kết nối đến server')
       }
     } finally {
       setLoading(false)
