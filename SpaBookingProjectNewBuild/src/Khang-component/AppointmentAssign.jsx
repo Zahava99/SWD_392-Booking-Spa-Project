@@ -13,7 +13,8 @@
 //   FormControl,
 //   InputLabel,
 //   Select,
-//   MenuItem
+//   MenuItem,
+//   Button
 // } from '@mui/material'
 // import axios from 'axios'
 
@@ -56,11 +57,16 @@
 
 //         const bookingsData = appointmentsResponse.data
 //         const paymentsData = paymentsResponse.data
-
+//         console.log('Raw paymentsResponse Data:', paymentsData) //co du lieu;
+        
+//         // Tạo paymentMap
 //         const paymentMap = paymentsData.reduce((acc, payment) => {
 //           if (payment.appointment?._id) {
-//             acc[payment.appointment._id] =
-//               PaymentStatusEnum[payment.status] || 'Unknown'
+//             acc[payment.appointment._id] = {
+//               statusText: PaymentStatusEnum[payment.status] || 'Unknown',
+//               statusCode: payment.status,
+//               paymentId: payment._id // Lưu ID để dùng sau nếu cần
+//             }
 //           }
 //           return acc
 //         }, {})
@@ -119,13 +125,16 @@
 //         }, {})
 
 //         const formattedBookings = bookingsData.map(booking => {
-//           console.log(`Booking ID: ${booking._id}, staff: ${booking.staff}`) // Debug giá trị staff
+//           console.log(`Booking ID: ${booking._id}, staff: ${booking.staff}`)
 //           return {
 //             id: booking._id,
 //             date: new Date(booking.date).toISOString().split('T')[0],
 //             time: booking.time,
 //             status: AppointmentStatusEnum[booking.status] || 'Unknown',
-//             paymentStatus: paymentMap[booking._id] || 'Unknown',
+//             statusCode: booking.status,
+//             paymentStatus: paymentMap[booking._id]?.statusText || 'Unknown',
+//             paymentStatusCode: paymentMap[booking._id]?.statusCode ?? '',
+//             paymentId: paymentMap[booking._id]?.paymentId || '',
 //             customer: booking.customer
 //               .flat()
 //               .map(id => customerInfoMap[id] || 'Unknown')
@@ -134,7 +143,7 @@
 //               .flat()
 //               .map(id => serviceInfoMap[id] || 'Unknown')
 //               .join(', '),
-//             staff: booking.staff || '', // Sử dụng field "staff" thay vì "spaStaff"
+//             staff: booking.staff || '',
 //             staffName: booking.staff
 //               ? staffInfoMap[booking.staff] || 'Unknown'
 //               : '',
@@ -166,8 +175,8 @@
 //       const payload = {
 //         customer: customerId,
 //         total: booking.raw.total || 0,
-//         status: booking.raw.status || 0,
-//         staff: staffId, // Sử dụng "staff" trong payload
+//         status: booking.statusCode || 0,
+//         staff: staffId,
 //         services: flatServices,
 //         time: booking.raw.time || booking.time || '00:00',
 //         date: booking.raw.date || booking.date
@@ -187,7 +196,7 @@
 //         b.id === bookingId
 //           ? {
 //               ...b,
-//               staff: staffId, // Cập nhật "staff" thay vì "spaStaff"
+//               staff: staffId,
 //               staffName: staffName ? `${staffName.fName} ${staffName.lName}` : 'Unknown'
 //             }
 //           : b
@@ -199,6 +208,132 @@
 //       setAssigning(prev => ({ ...prev, [bookingId]: false }))
 //     }
 //   }
+
+//   const handleUnassignStaff = async (bookingId) => {
+//     setAssigning(prev => ({ ...prev, [bookingId]: true }))
+//     try {
+//       const booking = bookings.find(b => b.id === bookingId)
+//       if (!booking) return
+
+//       const customerId = booking.raw.customer.flat()[0]
+//       const flatServices = booking.raw.services.flat()
+
+//       const payload = {
+//         customer: customerId,
+//         total: booking.raw.total || 0,
+//         status: booking.statusCode || 0,
+//         staff: '',
+//         services: flatServices,
+//         time: booking.raw.time || booking.time || '00:00',
+//         date: booking.raw.date || booking.date
+//       }
+
+//       const token = sessionStorage.getItem('token')
+//       await axios.put(
+//         `http://localhost:3000/api/appointments/${bookingId}`,
+//         payload,
+//         {
+//           headers: { Authorization: `Bearer ${token}` }
+//         }
+//       )
+
+//       const updatedBookings = bookings.map(b =>
+//         b.id === bookingId
+//           ? { ...b, staff: '', staffName: '' }
+//           : b
+//       )
+//       setBookings(updatedBookings)
+//     } catch (err) {
+//       console.error('Error unassigning staff', err)
+//     } finally {
+//       setAssigning(prev => ({ ...prev, [bookingId]: false }))
+//     }
+//   }
+
+//   const handleChangeStatus = async (bookingId, newStatusCode) => {
+//     setAssigning(prev => ({ ...prev, [bookingId]: true }))
+//     try {
+//       const booking = bookings.find(b => b.id === bookingId)
+//       if (!booking) return
+
+//       const customerId = booking.raw.customer.flat()[0]
+//       const flatServices = booking.raw.services.flat()
+
+//       const payload = {
+//         customer: customerId,
+//         total: booking.raw.total || 0,
+//         status: newStatusCode,
+//         staff: booking.staff || '',
+//         services: flatServices,
+//         time: booking.raw.time || booking.time || '00:00',
+//         date: booking.raw.date || booking.date
+//       }
+
+//       const token = sessionStorage.getItem('token')
+//       await axios.put(
+//         `http://localhost:3000/api/appointments/${bookingId}`,
+//         payload,
+//         {
+//           headers: { Authorization: `Bearer ${token}` }
+//         }
+//       )
+
+//       const updatedBookings = bookings.map(b =>
+//         b.id === bookingId
+//           ? {
+//               ...b,
+//               status: AppointmentStatusEnum[newStatusCode] || 'Unknown',
+//               statusCode: newStatusCode
+//             }
+//           : b
+//       )
+//       setBookings(updatedBookings)
+//     } catch (err) {
+//       console.error('Error updating status', err)
+//     } finally {
+//       setAssigning(prev => ({ ...prev, [bookingId]: false }))
+//     }
+//   }
+
+//   // Để lại hàm này để dùng khi có API PUT /api/payment/:id
+//   /*
+//   const handleChangePaymentStatus = async (bookingId, paymentId, newStatusCode) => {
+//     setAssigning(prev => ({ ...prev, [bookingId]: true }))
+//     try {
+//       const booking = bookings.find(b => b.id === bookingId)
+//       if (!booking || !paymentId) return
+
+//       const payload = {
+//         status: newStatusCode,
+//         appointment: bookingId
+//       }
+
+//       const token = sessionStorage.getItem('token')
+//       await axios.put(
+//         `http://localhost:3000/api/payment/${paymentId}`,
+//         payload,
+//         {
+//           headers: { Authorization: `Bearer ${token}` }
+//         }
+//       )
+
+//       const updatedBookings = bookings.map(b =>
+//         b.id === bookingId
+//           ? {
+//               ...b,
+//               paymentStatus: PaymentStatusEnum[newStatusCode] || 'Unknown',
+//               paymentStatusCode: newStatusCode
+//             }
+//           : b
+//       )
+//       setBookings(updatedBookings)
+//     } catch (err) {
+//       console.error('Error updating payment status', err)
+//     } finally {
+//       setAssigning(prev => ({ ...prev, [bookingId]: false }))
+//     }
+//   }
+//   */
 
 //   return (
 //     <Box>
@@ -227,36 +362,91 @@
 //                   <TableCell>{booking.customer}</TableCell>
 //                   <TableCell>{booking.services}</TableCell>
 //                   <TableCell>
-//                     <Typography variant='body2'>{booking.status}</Typography>
-//                     {/* Kiểm tra field "staff" thay vì "spaStaff" */}
-//                     {booking.staff && booking.staffName ? (
-//                       <Typography variant='body2' color='textSecondary'>
-//                         Assigned to: {booking.staffName}
-//                       </Typography>
-//                     ) : (
-//                       <FormControl fullWidth size='small' sx={{ mt: 1 }}>
-//                         <InputLabel>Assign Staff</InputLabel>
+//                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+//                       <FormControl fullWidth size='small'>
+//                         <InputLabel>Status</InputLabel>
 //                         <Select
-//                           value={booking.staff || ''} // Sử dụng "staff"
-//                           label='Assign Staff'
+//                           value={booking.statusCode}
+//                           label='Status'
 //                           onChange={e =>
-//                             handleAssignStaff(booking.id, e.target.value)
+//                             handleChangeStatus(booking.id, parseInt(e.target.value))
 //                           }
 //                           disabled={assigning[booking.id] === true}
 //                         >
-//                           <MenuItem value=''>
-//                             <em>Select Staff</em>
-//                           </MenuItem>
-//                           {staffList.map(staff => (
-//                             <MenuItem key={staff._id} value={staff._id}>
-//                               {staff.fName} {staff.lName}
+//                           {Object.entries(AppointmentStatusEnum).map(([code, label]) => (
+//                             <MenuItem key={code} value={parseInt(code)}>
+//                               {label}
 //                             </MenuItem>
 //                           ))}
 //                         </Select>
 //                       </FormControl>
-//                     )}
+//                       {booking.staff && booking.staffName ? (
+//                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+//                           <Typography variant='body2' color='textSecondary'>
+//                             Assigned to: {booking.staffName}
+//                           </Typography>
+//                           <Button
+//                             variant='outlined'
+//                             size='small'
+//                             color='error'
+//                             onClick={() => handleUnassignStaff(booking.id)}
+//                             disabled={assigning[booking.id] === true}
+//                           >
+//                             Unassign
+//                           </Button>
+//                         </Box>
+//                       ) : (
+//                         <FormControl fullWidth size='small'>
+//                           <InputLabel>Assign Staff</InputLabel>
+//                           <Select
+//                             value={booking.staff || ''}
+//                             label='Assign Staff'
+//                             onChange={e =>
+//                               handleAssignStaff(booking.id, e.target.value)
+//                             }
+//                             disabled={assigning[booking.id] === true}
+//                           >
+//                             <MenuItem value=''>
+//                               <em>Select Staff</em>
+//                             </MenuItem>
+//                             {staffList.map(staff => (
+//                               <MenuItem key={staff._id} value={staff._id}>
+//                                 {staff.fName} {staff.lName}
+//                               </MenuItem>
+//                             ))}
+//                           </Select>
+//                         </FormControl>
+//                       )}
+//                     </Box>
 //                   </TableCell>
-//                   <TableCell>{booking.paymentStatus}</TableCell>
+//                   <TableCell>
+//                     {/* Hiện chỉ hiển thị text vì không có API PUT */}
+//                     <Typography variant='body2'>{booking.paymentStatus}</Typography>
+//                     {/* Uncomment phần dưới khi có API PUT /api/payment/:id */}
+//                     {/*
+//                     <FormControl fullWidth size='small'>
+//                       <InputLabel>Payment Status</InputLabel>
+//                       <Select
+//                         value={booking.paymentStatusCode}
+//                         label='Payment Status'
+//                         onChange={e =>
+//                           handleChangePaymentStatus(
+//                             booking.id,
+//                             booking.paymentId,
+//                             parseInt(e.target.value)
+//                           )
+//                         }
+//                         disabled={assigning[booking.id] === true || !booking.paymentId}
+//                       >
+//                         {Object.entries(PaymentStatusEnum).map(([code, label]) => (
+//                           <MenuItem key={code} value={parseInt(code)}>
+//                             {label}
+//                           </MenuItem>
+//                         ))}
+//                       </Select>
+//                     </FormControl>
+//                     */}
+//                   </TableCell>
 //                   <TableCell>{booking.date}</TableCell>
 //                   <TableCell>{booking.time}</TableCell>
 //                 </TableRow>
@@ -327,11 +517,15 @@ export default function AppointmentAssign ({ limit, filterToday }) {
 
         const bookingsData = appointmentsResponse.data
         const paymentsData = paymentsResponse.data
-
+        console.log('Raw paymentsResponse Data:', paymentsData)
+        
         const paymentMap = paymentsData.reduce((acc, payment) => {
           if (payment.appointment?._id) {
-            acc[payment.appointment._id] =
-              PaymentStatusEnum[payment.status] || 'Unknown'
+            acc[payment.appointment._id] = {
+              statusText: PaymentStatusEnum[payment.status] || 'Unknown',
+              statusCode: payment.status,
+              paymentId: payment._id
+            }
           }
           return acc
         }, {})
@@ -396,8 +590,10 @@ export default function AppointmentAssign ({ limit, filterToday }) {
             date: new Date(booking.date).toISOString().split('T')[0],
             time: booking.time,
             status: AppointmentStatusEnum[booking.status] || 'Unknown',
-            statusCode: booking.status, // Lưu mã trạng thái để dễ cập nhật
-            paymentStatus: paymentMap[booking._id] || 'Unknown',
+            statusCode: booking.status,
+            paymentStatus: paymentMap[booking._id]?.statusText || 'Unknown',
+            paymentStatusCode: paymentMap[booking._id]?.statusCode ?? '',
+            paymentId: paymentMap[booking._id]?.paymentId || '',
             customer: booking.customer
               .flat()
               .map(id => customerInfoMap[id] || 'Unknown')
@@ -485,7 +681,7 @@ export default function AppointmentAssign ({ limit, filterToday }) {
         customer: customerId,
         total: booking.raw.total || 0,
         status: booking.statusCode || 0,
-        staff: '', // Xóa staff bằng cách gửi chuỗi rỗng
+        staff: '',
         services: flatServices,
         time: booking.raw.time || booking.time || '00:00',
         date: booking.raw.date || booking.date
@@ -525,7 +721,7 @@ export default function AppointmentAssign ({ limit, filterToday }) {
       const payload = {
         customer: customerId,
         total: booking.raw.total || 0,
-        status: newStatusCode, // Cập nhật status mới
+        status: newStatusCode,
         staff: booking.staff || '',
         services: flatServices,
         time: booking.raw.time || booking.time || '00:00',
@@ -558,6 +754,27 @@ export default function AppointmentAssign ({ limit, filterToday }) {
     }
   }
 
+  // Hàm xử lý xóa appointment
+  const handleDeleteAppointment = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to delete this appointment?')) return;
+    setAssigning(prev => ({ ...prev, [bookingId]: true }))
+    try {
+      const token = sessionStorage.getItem('token')
+      await axios.delete(`http://localhost:3000/api/appointments/${bookingId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+
+      // Cập nhật danh sách bookings sau khi xóa
+      const updatedBookings = bookings.filter(b => b.id !== bookingId)
+      setBookings(updatedBookings)
+    } catch (err) {
+      console.error('Error deleting appointment', err)
+      setError('Failed to delete appointment')
+    } finally {
+      setAssigning(prev => ({ ...prev, [bookingId]: false }))
+    }
+  }
+
   return (
     <Box>
       {loading ? (
@@ -576,6 +793,7 @@ export default function AppointmentAssign ({ limit, filterToday }) {
                 <TableCell>Payment Status</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell>Time</TableCell>
+                <TableCell>Actions</TableCell> {/* Cột mới cho nút Delete */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -586,7 +804,6 @@ export default function AppointmentAssign ({ limit, filterToday }) {
                   <TableCell>{booking.services}</TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      {/* Dropdown để chỉnh status */}
                       <FormControl fullWidth size='small'>
                         <InputLabel>Status</InputLabel>
                         <Select
@@ -604,8 +821,6 @@ export default function AppointmentAssign ({ limit, filterToday }) {
                           ))}
                         </Select>
                       </FormControl>
-
-                      {/* Logic hiển thị Assign/Unassign Staff */}
                       {booking.staff && booking.staffName ? (
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <Typography variant='body2' color='textSecondary'>
@@ -645,9 +860,24 @@ export default function AppointmentAssign ({ limit, filterToday }) {
                       )}
                     </Box>
                   </TableCell>
-                  <TableCell>{booking.paymentStatus}</TableCell>
+                  <TableCell>
+                    <Typography variant='body2'>{booking.paymentStatus}</Typography>
+                  </TableCell>
                   <TableCell>{booking.date}</TableCell>
                   <TableCell>{booking.time}</TableCell>
+                  <TableCell>
+                    {(booking.statusCode === 2 || booking.statusCode === 3) && (
+                      <Button
+                        variant='contained'
+                        color='error'
+                        size='small'
+                        onClick={() => handleDeleteAppointment(booking.id)}
+                        disabled={assigning[booking.id] === true}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

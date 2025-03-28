@@ -1,22 +1,17 @@
 // import { useState, useEffect } from 'react';
 // import axios from 'axios';
 // import {
-//   Box, Typography, Grid, Card, CardMedia, CardContent, Button, Divider, Dialog, DialogTitle, DialogContent, DialogActions,
+//   Box, Typography, Grid, Card, CardMedia, CardContent, Button,
 //   TextField, Select, MenuItem, Checkbox, FormControlLabel, Slider, FormGroup
 // } from '@mui/material';
 
-// const Store = () => {
+// const Store = ({ cart, setCart, handleAddToCart }) => {
 //   const [products, setProducts] = useState([]);
-//   const [cart, setCart] = useState([]);
-//   const [openCart, setOpenCart] = useState(false);
-//   const [error, setError] = useState('');
-//   const [loading, setLoading] = useState(false);
-//   const [paymentLink, setPaymentLink] = useState('');
 //   const [searchTerm, setSearchTerm] = useState('');
 //   const [selectedCategory, setSelectedCategory] = useState('');
 //   const [sortBy, setSortBy] = useState('default');
 //   const [availability, setAvailability] = useState({ inStock: false, outOfStock: false });
-//   const [priceRange, setPriceRange] = useState([0, 3000000]); // Khoảng giá: 0 đến 3.000.000 VNĐ
+//   const [priceRange, setPriceRange] = useState([0, 3000000]);
 //   const [finishes, setFinishes] = useState({ cream: false, glimmer: false, glitter: false, glossy: false });
 
 //   // Lấy danh sách sản phẩm từ MockAPI
@@ -29,76 +24,6 @@
 //         console.error('Error fetching products:', error);
 //       });
 //   }, []);
-
-//   // Hàm thêm sản phẩm vào giỏ hàng
-//   const handleAddToCart = (product) => {
-//     const existingProduct = cart.find(item => item.id === product.id);
-//     if (existingProduct) {
-//       setCart(cart.map(item =>
-//         item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-//       ));
-//     } else {
-//       setCart([...cart, { ...product, quantity: 1 }]);
-//     }
-//   };
-
-//   // Hàm xóa sản phẩm khỏi giỏ hàng
-//   const handleRemoveFromCart = (productId) => {
-//     setCart(cart.filter(item => item.id !== productId));
-//   };
-
-//   // Tính tổng tiền
-//   const calculateTotal = () => {
-//     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
-//   };
-
-//   // Hàm xử lý thanh toán
-//   const handleCheckout = async () => {
-//     setError('');
-//     const token = sessionStorage.getItem('token');
-//     if (!token) {
-//       setError('Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục thanh toán.');
-//       return;
-//     }
-
-//     const totalAmount = calculateTotal();
-//     if (totalAmount === 0) {
-//       setError('Giỏ hàng trống!');
-//       return;
-//     }
-
-//     try {
-//       setLoading(true);
-//       const response = await axios.post(
-//         'http://localhost:3000/api/payment/create',
-//         {
-//           totalAmount: totalAmount,
-//           appointmentId: "67e37d1cc9f3b27626f4ea84",
-//           method: 0,
-//           cancelUrl: 'http://localhost:3000/cancel'
-//         },
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`
-//           }
-//         }
-//       );
-
-//       if (response.data && response.data.paymentLink) {
-//         setPaymentLink(response.data.paymentLink);
-//         window.location.href = response.data.paymentLink;
-//         setCart([]);
-//         setOpenCart(false);
-//       } else {
-//         setError('Không nhận được link thanh toán từ server');
-//       }
-//     } catch (err) {
-//       console.error('Error during checkout:', err);
-//       setError('Có lỗi xảy ra trong quá trình thanh toán');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
 
 //   // Tạo danh sách danh mục duy nhất từ sản phẩm
 //   const categories = [...new Set(products.map(product => product.category).filter(cat => cat))];
@@ -154,8 +79,8 @@
 //           onChange={(e, newValue) => setPriceRange(newValue)}
 //           valueLabelDisplay="auto"
 //           min={0}
-//           max={3000000} // Tối đa 3.000.000 VNĐ
-//           step={10000} // Bước nhảy 10.000 VNĐ
+//           max={3000000}
+//           step={10000}
 //           sx={{ width: '100%' }}
 //         />
 //         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -260,79 +185,16 @@
 //             ))}
 //           </Grid>
 //         )}
-
-//         {/* Nút mở giỏ hàng */}
-//         <Button
-//           variant="outlined"
-//           sx={{ mt: 3 }}
-//           onClick={() => setOpenCart(true)}
-//         >
-//           Xem giỏ hàng ({cart.length})
-//         </Button>
-
-//         {/* Dialog giỏ hàng */}
-//         <Dialog open={openCart} onClose={() => setOpenCart(false)}>
-//           <DialogTitle>Giỏ hàng của bạn</DialogTitle>
-//           <DialogContent>
-//             {error && (
-//               <Typography color="error" sx={{ mb: 2 }}>
-//                 {error}
-//               </Typography>
-//             )}
-//             {cart.length === 0 ? (
-//               <Typography>Giỏ hàng trống</Typography>
-//             ) : (
-//               <Box>
-//                 {cart.map(item => (
-//                   <Box key={item.id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-//                     <Typography>{item.name} (x{item.quantity})</Typography>
-//                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-//                       <Typography>{(item.price * item.quantity).toLocaleString('vi-VN')} VNĐ</Typography>
-//                       <Button
-//                         color="error"
-//                         sx={{ ml: 2 }}
-//                         onClick={() => handleRemoveFromCart(item.id)}
-//                       >
-//                         Xóa
-//                       </Button>
-//                     </Box>
-//                   </Box>
-//                 ))}
-//                 <Divider sx={{ my: 2 }} />
-//                 <Typography variant="h6">
-//                   Tổng cộng: {calculateTotal().toLocaleString('vi-VN')} VNĐ
-//                 </Typography>
-//               </Box>
-//             )}
-//           </DialogContent>
-//           <DialogActions>
-//             <Button onClick={() => setOpenCart(false)} disabled={loading}>
-//               Đóng
-//             </Button>
-//             {cart.length > 0 && (
-//               <Button
-//                 variant="contained"
-//                 onClick={handleCheckout}
-//                 disabled={loading}
-//               >
-//                 {loading ? 'Đang xử lý...' : 'Thanh toán'}
-//               </Button>
-//             )}
-//           </DialogActions>
-//         </Dialog>
-
-//         {/* Hiển thị paymentLink nếu có */}
-//         {paymentLink && (
-//           <Box sx={{ mt: 2 }}>
-//             <Typography>Link thanh toán: <a href={paymentLink}>{paymentLink}</a></Typography>
-//           </Box>
-//         )}
 //       </Box>
 //     </Box>
 //   );
 // };
 
 // export default Store;
+
+
+
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
@@ -342,6 +204,7 @@ import {
 
 const Store = ({ cart, setCart, handleAddToCart }) => {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [sortBy, setSortBy] = useState('default');
@@ -349,30 +212,57 @@ const Store = ({ cart, setCart, handleAddToCart }) => {
   const [priceRange, setPriceRange] = useState([0, 3000000]);
   const [finishes, setFinishes] = useState({ cream: false, glimmer: false, glitter: false, glossy: false });
 
-  // Lấy danh sách sản phẩm từ MockAPI
+  // Lấy danh sách sản phẩm và danh mục từ API
   useEffect(() => {
-    axios.get('https://6670f800e083e62ee4399f31.mockapi.io/API/ShopSPA')
-      .then(response => {
-        setProducts(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching products:', error);
-      });
+    const fetchData = async () => {
+      try {
+        const token = sessionStorage.getItem('token');
+        const [productsResponse, categoriesResponse] = await Promise.all([
+          axios.get('http://localhost:3000/api/products', {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get('http://localhost:3000/api/category', {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        setProducts(productsResponse.data.data || productsResponse.data || []);
+        setCategories(categoriesResponse.data.data || categoriesResponse.data || []);
+
+        console.log('Products:', productsResponse.data);
+        console.log('Categories:', categoriesResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
+  // Hàm lấy tên danh mục từ categoryId
+  const getCategoryName = (categoryId) => {
+    const category = categories.find((cat) => cat.id === categoryId);
+    return category ? category.name : 'Unknown';
+  };
+
+  // Định dạng giá tiền theo VND
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+  };
+
   // Tạo danh sách danh mục duy nhất từ sản phẩm
-  const categories = [...new Set(products.map(product => product.category).filter(cat => cat))];
+  const uniqueCategories = [...new Set(products.map(product => product.category))];
 
   // Lọc sản phẩm dựa trên các bộ lọc
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.trim().toLowerCase());
     const matchesCategory = selectedCategory === '' || product.category === selectedCategory;
-    const matchesAvailability = 
+    const matchesAvailability =
       (!availability.inStock && !availability.outOfStock) ||
-      (availability.inStock && product.inStock) ||
-      (availability.outOfStock && !product.inStock);
+      (availability.inStock && product.stock > 0) ||
+      (availability.outOfStock && product.stock === 0);
     const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
-    const matchesFinish = 
+    const matchesFinish =
       (!finishes.cream && !finishes.glimmer && !finishes.glitter && !finishes.glossy) ||
       (finishes.cream && product.finish === 'Cream') ||
       (finishes.glimmer && product.finish === 'Glimmer') ||
@@ -417,10 +307,11 @@ const Store = ({ cart, setCart, handleAddToCart }) => {
           max={3000000}
           step={10000}
           sx={{ width: '100%' }}
+          valueLabelFormat={(value) => formatPrice(value)}
         />
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography>{priceRange[0].toLocaleString('vi-VN')} VNĐ</Typography>
-          <Typography>{priceRange[1].toLocaleString('vi-VN')} VNĐ</Typography>
+          <Typography>{formatPrice(priceRange[0])}</Typography>
+          <Typography>{formatPrice(priceRange[1])}</Typography>
         </Box>
 
         <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>Finish</Typography>
@@ -462,8 +353,10 @@ const Store = ({ cart, setCart, handleAddToCart }) => {
               sx={{ minWidth: 200 }}
             >
               <MenuItem value="">Tất cả danh mục</MenuItem>
-              {categories.map(category => (
-                <MenuItem key={category} value={category}>{category}</MenuItem>
+              {uniqueCategories.map(categoryId => (
+                <MenuItem key={categoryId} value={categoryId}>
+                  {getCategoryName(categoryId)}
+                </MenuItem>
               ))}
             </Select>
           </Box>
@@ -487,7 +380,7 @@ const Store = ({ cart, setCart, handleAddToCart }) => {
         ) : (
           <Grid container spacing={3}>
             {sortedProducts.map(product => (
-              <Grid item xs={12} sm={6} md={4} key={product.id}>
+              <Grid item xs={12} sm={6} md={4} key={product._id}>
                 <Card>
                   <CardMedia
                     component="img"
@@ -499,18 +392,13 @@ const Store = ({ cart, setCart, handleAddToCart }) => {
                     <Typography variant="h6">{product.name}</Typography>
                     <Box sx={{ display: 'flex', gap: 1 }}>
                       <Typography variant="h6" color="primary">
-                        {product.price.toLocaleString('vi-VN')} VNĐ
+                        {formatPrice(product.price)}
                       </Typography>
-                      {product.originalPrice && (
-                        <Typography variant="body2" color="text.secondary" sx={{ textDecoration: 'line-through' }}>
-                          {product.originalPrice.toLocaleString('vi-VN')} VNĐ
-                        </Typography>
-                      )}
                     </Box>
                     <Button
                       variant="contained"
                       sx={{ mt: 2 }}
-                      onClick={() => handleAddToCart(product)}
+                      onClick={() => handleAddToCart({ ...product, id: product._id })}
                     >
                       Thêm vào giỏ hàng
                     </Button>
