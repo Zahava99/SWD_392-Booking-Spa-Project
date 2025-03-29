@@ -536,7 +536,7 @@ export default function AppointmentAssign ({ limit, filterToday }) {
                 <TableCell>Payment Status</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell>Time</TableCell>
-                <TableCell>Actions</TableCell> {/* Cột mới cho nút Delete */}
+                {/* <TableCell>Actions</TableCell> Cột mới cho nút Delete */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -624,8 +624,8 @@ export default function AppointmentAssign ({ limit, filterToday }) {
                     </Box>
                   </TableCell>
                   <TableCell>
-                    {/* <Typography variant='body2'>{booking.paymentStatus}</Typography> */}
-                    <FormControl fullWidth size='small'>
+                    <Typography variant='body2'>{booking.paymentStatus}</Typography>
+                    {/* <FormControl fullWidth size='small'>
                       <InputLabel>Payment Status</InputLabel>
                       <Select
                         value={booking.paymentStatusCode}
@@ -646,11 +646,11 @@ export default function AppointmentAssign ({ limit, filterToday }) {
                           )
                         )}
                       </Select>
-                    </FormControl>
+                    </FormControl> */}
                   </TableCell>
                   <TableCell>{booking.date}</TableCell>
                   <TableCell>{booking.time}</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     {(booking.statusCode === 2 || booking.statusCode === 3) && (
                       <Button
                         variant='contained'
@@ -662,7 +662,7 @@ export default function AppointmentAssign ({ limit, filterToday }) {
                         Delete
                       </Button>
                     )}
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
