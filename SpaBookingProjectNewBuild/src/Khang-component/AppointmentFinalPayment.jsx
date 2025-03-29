@@ -705,7 +705,7 @@ export default function AppointmentFinalPayment({ limit, filterToday }) {
       console.log('PayNowAnchor đã lưu:', localStorage.getItem('PayNowAnchor'));
       const response = await axios.post(
         'https://mcmapp.online/api/product-payment/create',
-        { totalAmount, description, promotion: promotionId },
+        { totalAmount, description, promotion: promotionId,address:"Payment Success" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success('Payment created successfully!');
@@ -825,7 +825,7 @@ export default function AppointmentFinalPayment({ limit, filterToday }) {
                     Time
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>Action</TableCell>
+                {/* <TableCell>Action</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -851,7 +851,7 @@ export default function AppointmentFinalPayment({ limit, filterToday }) {
                   </TableCell>
                   <TableCell>{booking.date}</TableCell>
                   <TableCell>{booking.time}</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     {booking.paymentStatus === 'Success' && (
                       <Button
                         variant='outlined'
@@ -861,7 +861,7 @@ export default function AppointmentFinalPayment({ limit, filterToday }) {
                         Delete
                       </Button>
                     )}
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
