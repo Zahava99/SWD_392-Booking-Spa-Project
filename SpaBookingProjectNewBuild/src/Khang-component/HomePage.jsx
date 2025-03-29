@@ -25,6 +25,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import "../Khang-component-css/homePage.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useLocation } from 'react-router-dom';
 // Placeholder images
 const heroImage =
   "https://images.unsplash.com/photo-1600334129128-685c5582fd35?q=80&w=2070&auto=format&fit=crop";
@@ -128,6 +129,79 @@ const HomePage = () => {
       });
   }, []);
 
+  const location = useLocation()
+
+  const updatePaymentStatus = async (paymentData) => {
+    const token = sessionStorage.getItem('token');
+    try {
+      console.log('Gọi API cập nhật với paymentData:', paymentData);
+      const response = await axios.put(
+        `https://mcmapp.online/api/payment/${paymentData.paymentId}`,
+        {
+          status: 1,
+          totalAmount: paymentData.totalAmount,
+          method: paymentData.method
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log('Phản hồi từ API:', response.data);
+      toast.success('Payment status updated to Paid!');
+    } catch (error) {
+      console.error('Lỗi API:', error.response?.data || error.message);
+      toast.error('Error updating payment status: ' + error.message);
+    }
+  };
+
+  const fetchPaymentByOrderCode = async (orderCode) => {
+    const token = sessionStorage.getItem('token');
+    try {
+      console.log('Tìm payment với orderCode:', orderCode);
+      const response = await axios.get(
+        'https://mcmapp.online/api/payment',
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const payment = response.data.find(p => p.orderCode === orderCode);
+      console.log('Payment tìm được:', payment);
+      return payment
+        ? { paymentId: payment._id, totalAmount: payment.amount, method: payment.method }
+        : null;
+    } catch (error) {
+      console.error('Lỗi khi tìm payment:', error.response?.data || error.message);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const paymentDataFromLocal = JSON.parse(localStorage.getItem('PayNowAnchor'));
+    const queryParams = new URLSearchParams(location.search);
+    const payosStatus = queryParams.get('status');
+    const orderCode = queryParams.get('orderCode');
+
+    console.log('Current pathname:', location.pathname);
+    console.log('Full URL:', window.location.href);
+    console.log('Payment Data từ localStorage:', paymentDataFromLocal);
+    console.log('PayOS Status:', payosStatus);
+    console.log('Order Code:', orderCode);
+
+    const handlePaymentUpdate = async () => {
+      let paymentData = paymentDataFromLocal;
+
+      if (!paymentData?.paymentId && orderCode && payosStatus === 'PAID') {
+        paymentData = await fetchPaymentByOrderCode(orderCode);
+      }
+
+      if (paymentData?.paymentId && location.pathname === '/' && payosStatus === 'PAID') {
+        console.log('Chuẩn bị cập nhật trạng thái với paymentData:', paymentData);
+        await updatePaymentStatus(paymentData);
+        localStorage.removeItem('PayNowAnchor');
+        console.log('PayNowAnchor sau khi xóa:', localStorage.getItem('PayNowAnchor'));
+      } else {
+        console.log('Không có paymentId hợp lệ hoặc điều kiện không khớp');
+      }
+    };
+
+    handlePaymentUpdate();
+  }, [location.pathname, location.search]);
   return (
     <Box>
       {/* Hero Section */}

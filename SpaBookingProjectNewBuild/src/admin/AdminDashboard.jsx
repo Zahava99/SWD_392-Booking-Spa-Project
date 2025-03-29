@@ -120,6 +120,7 @@ import BookingsList from "./BookingsList";
 import BookingStats from "./BookingStats";
 import AdminCalendar from "./AdminCalendar";
 import AppointmentAssign from "../Khang-component/AppointmentAssign";
+import AppointmentFinalPayment from "../Khang-component/AppointmentFinalPayment";
 import axios from "axios";
 
 function TabPanel(props) {
@@ -178,6 +179,7 @@ export default function AdminDashboard() {
             <Tab label="Bookings" {...a11yProps(1)} />
             <Tab label="Calendar" {...a11yProps(2)} />
             <Tab label="Appointment Assign" {...a11yProps(3)} />
+            <Tab label="Appointment Final Payment" {...a11yProps(44)} />
           </Tabs>
 
           <TabPanel value={tabValue} index={0}>
@@ -205,6 +207,9 @@ export default function AdminDashboard() {
           </TabPanel>
           <TabPanel value={tabValue} index={3}>
             <AppointmentAssign />
+          </TabPanel>
+          <TabPanel value={tabValue} index={4}>
+            <AppointmentFinalPayment />
           </TabPanel>
         </Box>
       </Paper>

@@ -115,29 +115,71 @@ const theme = createTheme({
   },
 });
 
-// Component con để sử dụng useLocation
 function AppContent({ cart, setCart, handleAddToCart }) {
   const location = useLocation();
 
+  // Hàm cập nhật stock sau khi thanh toán thành công
+  const updateStock = async () => {
+    const token = sessionStorage.getItem('token');
+    if (!token) return;
+
+    const cartBeforeCheckout = JSON.parse(localStorage.getItem('cartBeforeCheckout') || '[]');
+    if (cartBeforeCheckout.length === 0) return;
+
+    try {
+      // Cập nhật stock cho từng sản phẩm
+      for (const item of cartBeforeCheckout) {
+        const productId = item.id;
+        const quantityPurchased = item.quantity;
+
+        // Lấy thông tin sản phẩm hiện tại từ API
+        const response = await axios.get(
+          `https://mcmapp.online/api/products/${productId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const currentProduct = response.data;
+
+        // Tính stock mới
+        const newStock = currentProduct.stock - quantityPurchased;
+        if (newStock < 0) {
+          console.warn(`Stock for product ${productId} would be negative. Skipping update.`);
+          continue; // Bỏ qua nếu stock không đủ
+        }
+
+        // Gửi yêu cầu cập nhật stock
+        await axios.put(
+          `https://mcmapp.online/api/products/${productId}`,
+          { stock: newStock },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        console.log(`Stock updated for product ${productId}: ${newStock}`);
+      }
+
+      console.log('All stock updated successfully');
+    } catch (error) {
+      console.error('Error updating stock:', error.response?.data || error.message);
+    }
+  };
+
   // Kiểm tra URL path để xác định trạng thái thanh toán
   useEffect(() => {
-    // Khi hủy thanh toán
     if (location.pathname === '/cancelpayment') {
       const savedCart = localStorage.getItem('cartBeforeCheckout');
       if (savedCart) {
         setCart(JSON.parse(savedCart));
       }
-      // Lưu cờ để biết rằng thanh toán đã bị hủy
       localStorage.setItem('paymentCancelled', 'true');
-    }
-    // Khi redirect về homepage
-    else if (location.pathname === '/') {
+    } else if (location.pathname === '/') {
       const paymentCancelled = localStorage.getItem('paymentCancelled');
       if (paymentCancelled === 'true') {
-        // Nếu vừa hủy thanh toán, không xóa giỏ hàng
-        localStorage.removeItem('paymentCancelled'); // Xóa cờ sau khi xử lý
+        localStorage.removeItem('paymentCancelled');
       } else {
-        // Nếu không phải hủy thanh toán, giả định thanh toán thành công và xóa giỏ hàng
+        // Thanh toán thành công: Cập nhật stock và xóa giỏ hàng
+        updateStock();
         setCart([]);
         localStorage.removeItem('cartBeforeCheckout');
       }
