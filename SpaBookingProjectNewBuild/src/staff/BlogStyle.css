@@ -1,0 +1,182 @@
+/* Reset styles */
+body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, figure, blockquote {
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f5f5f5;
+}
+a {
+  text-decoration: none;
+  color: #007bff;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Header */
+.header {
+  background: #007bff;
+  color: white;
+  padding: 15px 0;
+  text-align: center;
+}
+.header h1 {
+  font-size: 24px;
+}
+
+/* Navigation */
+.navbar {
+  display: flex;
+  justify-content: center;
+  background: #0056b3;
+  padding: 10px 0;
+}
+.navbar a {
+  color: white;
+  padding: 10px 20px;
+  font-weight: bold;
+}
+.navbar a:hover {
+  background: #003f7f;
+}
+
+/* Main Content */
+.container {
+  width: 80%;
+  margin: 20px auto;
+  background: white;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Blog Page Specific Styles */
+.blog-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* Blog Post */
+.blog-post {
+  width: 65%;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+.blog-post h2 {
+  font-size: 22px;
+  color: #007bff;
+}
+.blog-post p {
+  margin: 10px 0;
+}
+.blog-post .date {
+  font-size: 14px;
+  color: gray;
+}
+
+/* Sidebar (for blog page) */
+.blog-sidebar {
+  width: 30%;
+  background: #f8f9fa;
+  padding: 15px;
+}
+.blog-sidebar h3 {
+  font-size: 18px;
+  color: #333;
+}
+.blog-sidebar ul {
+  list-style: none;
+}
+.blog-sidebar ul li {
+  margin: 10px 0;
+}
+.blog-sidebar ul li a {
+  color: #007bff;
+}
+.blog-sidebar ul li a:hover {
+  text-decoration: underline;
+}
+
+/* Blog Post Detail Page */
+.blog-detail {
+  width: 100%;
+  padding: 20px;
+}
+.blog-detail h1 {
+  font-size: 28px;
+  color: #0056b3;
+  margin-bottom: 10px;
+}
+.blog-detail .date {
+  font-size: 14px;
+  color: gray;
+  margin-bottom: 15px;
+}
+.blog-detail p {
+  margin-bottom: 15px;
+  line-height: 1.8;
+}
+
+/* Comment Section */
+.comment-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid #ddd;
+}
+.comment-section h3 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 15px;
+}
+.comment {
+  background: #f8f8f8;
+  padding: 10px;
+  border-left: 3px solid #007bff;
+  margin-bottom: 10px;
+}
+.comment p {
+  margin: 5px 0;
+}
+.comment .author {
+  font-size: 14px;
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 10px;
+  background: #007bff;
+  color: white;
+  margin-top: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+      width: 95%;
+  }
+  .navbar {
+      flex-direction: column;
+      text-align: center;
+  }
+  .navbar a {
+      padding: 8px;
+  }
+  .blog-container {
+      flex-direction: column;
+  }
+  .blog-post {
+      width: 100%;
+  }
+  .blog-sidebar {
+      width: 100%;
+      margin-top: 20px;
+  }
+}

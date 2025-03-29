@@ -894,7 +894,8 @@ const Header = ({ cart = [], setCart, handleAddToCart }) => {
 
       if (response.data && response.data.paymentLink) {
         setPaymentLink(response.data.paymentLink)
-        window.location.href = response.data.paymentLink
+        // window.location.href = response.data.paymentLink
+        window.open(response.data.paymentLink, '_blank')
         setOpenCart(false)
       } else {
         setError('Không nhận được link thanh toán từ server')
@@ -1144,7 +1145,7 @@ const Header = ({ cart = [], setCart, handleAddToCart }) => {
             Đã giảm: {formatPrice(calculateTotal() - calculateTotalAfterDiscount())}
           </Typography>
           <Typography variant='h6' color='primary'>
-            Tổng tiền sau khuyến mãi: {formatPrice(calculateTotalAfterDiscount())} (tham khảo)
+            Tổng tiền sau khuyến mãi: {formatPrice(calculateTotalAfterDiscount())}
           </Typography>
         </>
       )}

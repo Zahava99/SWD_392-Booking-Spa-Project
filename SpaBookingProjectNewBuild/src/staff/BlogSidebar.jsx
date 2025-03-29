@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 
 const BlogSidebar = () => {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="blog-sidebar">
       {/* Search Widget */}
@@ -26,31 +30,31 @@ const BlogSidebar = () => {
         <div className="widget-categories">
           <ul className="list-unstyled list-style mb-0">
             <li>
-              <Link to="#">
+              <Link to="#" onClick={scrollToTop}>
                 <i className="fas fa-arrow-right text-primary me-2"></i>
                 Face Treatments
               </Link>
             </li>
             <li>
-              <Link to="#">
+              <Link to="#" onClick={scrollToTop}>
                 <i className="fas fa-arrow-right text-primary me-2"></i>
                 Massages
               </Link>
             </li>
             <li>
-              <Link to="#">
+              <Link to="#" onClick={scrollToTop}>
                 <i className="fas fa-arrow-right text-primary me-2"></i>
                 Body Treatments
               </Link>
             </li>
             <li>
-              <Link to="#">
+              <Link to="#" onClick={scrollToTop}>
                 <i className="fas fa-arrow-right text-primary me-2"></i>
                 Hair Removal
               </Link>
             </li>
             <li>
-              <Link to="#">
+              <Link to="#" onClick={scrollToTop}>
                 <i className="fas fa-arrow-right text-primary me-2"></i>
                 Medical Treatments
               </Link>
@@ -79,72 +83,6 @@ const BlogSidebar = () => {
             </div>
           </div>
           {/* Thêm các bài post gần đây khác tương tự */}
-        </div>
-      </div>
-
-      {/* Tags Widget */}
-      <div className="widget">
-        <div className="widget-title">
-          <h5>Tags</h5>
-        </div>
-        <div className="tagcloud">
-          <ul className="list-unstyled mb-0">
-            <li>
-              <Link to="#">Beauty</Link>
-            </li>
-            <li>
-              <Link to="#">Casino</Link>
-            </li>
-            <li>
-              <Link to="#">Group</Link>
-            </li>
-            <li>
-              <Link to="#">Luxury</Link>
-            </li>
-            <li>
-              <Link to="#">Love</Link>
-            </li>
-            <li>
-              <Link to="#">Massage</Link>
-            </li>
-            <li>
-              <Link to="#">Hotel</Link>
-            </li>
-            <li>
-              <Link to="#">Night</Link>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Social Follow Widget */}
-      <div className="widget">
-        <div className="widget-title">
-          <h5>Follow on</h5>
-        </div>
-        <div className="social-icon">
-          <ul className="list-unstyled">
-            <li>
-              <a href="#">
-                <i className="fab fa-facebook-f"></i>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <i className="fab fa-twitter"></i>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <i className="fab fa-linkedin-in"></i>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <i className="fab fa-instagram"></i>
-              </a>
-            </li>
-          </ul>
         </div>
       </div>
     </div>

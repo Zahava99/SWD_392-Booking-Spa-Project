@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import BlogSidebar from "../staff/BlogSidebar";
 import BlogPost from "../staff/BlogPost";
-import "../../src/staff/style.css";
+import "../../src/staff/BlogStyle.css";
 const Blog = () => {
   const blogPosts = [
     {
