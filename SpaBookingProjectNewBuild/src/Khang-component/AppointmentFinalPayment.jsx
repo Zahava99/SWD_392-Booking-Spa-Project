@@ -626,7 +626,7 @@ export default function AppointmentFinalPayment({ limit, filterToday }) {
         )
       );
       await fetchData();
-      toast.success('Payment status updated to Paid!');
+      // toast.success('Payment status updated to Paid!');
     } catch (error) {
       console.error('Lỗi API:', error.response?.data || error.message);
       toast.error('Error updating payment status: ' + error.message);
@@ -708,7 +708,7 @@ export default function AppointmentFinalPayment({ limit, filterToday }) {
         { totalAmount, description, promotion: promotionId,address:"Payment Success" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success('Payment created successfully!');
+      // toast.success('Payment created successfully!');
       handleCloseDialog();
       window.location.href = response.data.paymentLink;
     } catch (error) {
@@ -725,7 +725,7 @@ export default function AppointmentFinalPayment({ limit, filterToday }) {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBookings(bookings.filter(booking => booking.id !== bookingId));
-      toast.success('Appointment deleted successfully!');
+      // toast.success('Appointment deleted successfully!');
     } catch (error) {
       toast.error('Error deleting appointment: ' + error.message);
     }
